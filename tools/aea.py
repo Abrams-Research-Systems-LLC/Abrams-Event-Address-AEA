@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Abrams Event Address (AEA-STATE/1) — Zero-Dependency Reference Tool & Decoder
-Standard: 136-byte unpacked C struct, Little-Endian prefix [0, 104), SHA-256 trailer.
+Format: 136-byte unpacked C struct, Little-Endian prefix [0, 104), SHA-256 trailer.
 Python stdlib only: struct, hashlib, math, sys, json, argparse.
 """
 

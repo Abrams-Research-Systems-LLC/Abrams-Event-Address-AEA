@@ -18,3 +18,4 @@ Thumbs.db
 .vscode/
 *.log
 *.tmp
+examples/c_caller/aea_caller

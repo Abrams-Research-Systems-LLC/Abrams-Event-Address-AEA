@@ -1,0 +1,666 @@
+{
+ "format": "AEA-STATE/1",
+ "generator": "tools/gen_kat.py",
+ "vectors": [
+  {
+   "name": "cambridge_itrf_tai",
+   "op": "seal",
+   "note": "Original repo KAT (must equal 9f6cc109...)",
+   "fields": {
+    "version": 1,
+    "body_naif": 399,
+    "time_sec": 1246190426,
+    "time_nsec": 0,
+    "frame": 1,
+    "time_scale": 1,
+    "pos_m": [
+     "3916909.5232774816",
+     "8057.749278632174",
+     "5016918.648210711"
+    ],
+    "vel_mps": [
+     "0.0",
+     "0.0",
+     "0.0"
+    ],
+    "quat_xyzw": [
+     "0.0",
+     "0.0",
+     "0.0",
+     "1.0"
+    ]
+   },
+   "expected_rc": 0,
+   "expected_sha256": "9f6cc1096562729a902167fd622e66a264a239f3e9a9d804414659e3ab97800e",
+   "stored_hash": null,
+   "prefix_hex": "010000008f0100005a5b474a000000000000000001000100abc1fac236e24d41c774b9d0bf79bf40c7487ca955235341000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f03f"
+  },
+  {
+   "name": "cambridge_itrf_tt",
+   "op": "seal",
+   "note": "Same instant on TT (TT = TAI + 32.184 s)",
+   "fields": {
+    "version": 1,
+    "body_naif": 399,
+    "time_sec": 1246190458,
+    "time_nsec": 184000000,
+    "frame": 1,
+    "time_scale": 2,
+    "pos_m": [
+     "3916909.5232774816",
+     "8057.749278632174",
+     "5016918.648210711"
+    ],
+    "vel_mps": [
+     "0.0",
+     "0.0",
+     "0.0"
+    ],
+    "quat_xyzw": [
+     "0.0",
+     "0.0",
+     "0.0",
+     "1.0"
+    ]
+   },
+   "expected_rc": 0,
+   "expected_sha256": "412540ca07ed9e2ced0eb52b25b35b26da637c3411ef0ab2df7ecc92d29f0edb",
+   "stored_hash": null,
+   "prefix_hex": "010000008f0100007a5b474a00000000009ef70a01000200abc1fac236e24d41c774b9d0bf79bf40c7487ca955235341000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f03f"
+  },
+  {
+   "name": "leo_gcrs_tai",
+   "op": "seal",
+   "note": "Circular 400 km LEO illustrative state (2026-01-01T00:00:00 UTC)",
+   "fields": {
+    "version": 1,
+    "body_naif": 399,
+    "time_sec": 1767225629,
+    "time_nsec": 0,
+    "frame": 2,
+    "time_scale": 1,
+    "pos_m": [
+     "6778137.0",
+     "0.0",
+     "0.0"
+    ],
+    "vel_mps": [
+     "0.0",
+     "7668.558",
+     "0.0"
+    ],
+    "quat_xyzw": [
+     "0.0",
+     "0.0",
+     "0.0",
+     "1.0"
+    ]
+   },
+   "expected_rc": 0,
+   "expected_sha256": "92a189cfc2965c11b2ba720dcf5943db59b6f595e76307d1a10203d44fce083e",
+   "stored_hash": null,
+   "prefix_hex": "010000008f0100001db955690000000000000000020001000000004046db59410000000000000000000000000000000000000000000000002b8716d98ef4bd400000000000000000000000000000000000000000000000000000000000000000000000000000f03f"
+  },
+  {
+   "name": "earth_bcrs_tdb",
+   "op": "seal",
+   "note": "Illustrative barycentric state, body 0 (SSB); 2000-01-01T12:00:00 UTC",
+   "fields": {
+    "version": 1,
+    "body_naif": 0,
+    "time_sec": 946728024,
+    "time_nsec": 0,
+    "frame": 3,
+    "time_scale": 4,
+    "pos_m": [
+     "-26000000000.0",
+     "133000000000.0",
+     "57700000000.0"
+    ],
+    "vel_mps": [
+     "-29800.0",
+     "-4900.0",
+     "-2100.0"
+    ],
+    "quat_xyzw": [
+     "0.0",
+     "0.0",
+     "0.0",
+     "1.0"
+    ]
+   },
+   "expected_rc": 0,
+   "expected_sha256": "93abf455b19b19f5ee13165788866284c10630d22f92372fbf5ffd9e3f3e78f9",
+   "stored_hash": null,
+   "prefix_hex": "010000000000000058ec6d3800000000000000000300040000000010e23618c2000000f26af73e420000004260de2a4200000000001addc0000000000024b3c0000000000068a0c0000000000000000000000000000000000000000000000000000000000000f03f"
+  },
+  {
+   "name": "earth_bcrs_tcb",
+   "op": "seal",
+   "note": "Same as above, TCB tag (different hash by design)",
+   "fields": {
+    "version": 1,
+    "body_naif": 0,
+    "time_sec": 946728024,
+    "time_nsec": 0,
+    "frame": 3,
+    "time_scale": 3,
+    "pos_m": [
+     "-26000000000.0",
+     "133000000000.0",
+     "57700000000.0"
+    ],
+    "vel_mps": [
+     "-29800.0",
+     "-4900.0",
+     "-2100.0"
+    ],
+    "quat_xyzw": [
+     "0.0",
+     "0.0",
+     "0.0",
+     "1.0"
+    ]
+   },
+   "expected_rc": 0,
+   "expected_sha256": "acd792cc31875d2315affce6b30447d7ce6585ca8322192929d860756f25cc4e",
+   "stored_hash": null,
+   "prefix_hex": "010000000000000058ec6d3800000000000000000300030000000010e23618c2000000f26af73e420000004260de2a4200000000001addc0000000000024b3c0000000000068a0c0000000000000000000000000000000000000000000000000000000000000f03f"
+  },
+  {
+   "name": "mars_jezero_body_tai",
+   "op": "seal",
+   "note": "Jezero crater 18.4447N 77.4508E h=-2570 m, IAU2000 Mars ellipsoid; 2021-02-18T20:55:00 UTC",
+   "fields": {
+    "version": 1,
+    "body_naif": 499,
+    "time_sec": 1613681729,
+    "time_nsec": 0,
+    "frame": 4,
+    "time_scale": 1,
+    "pos_m": [
+     "699891.6562040435",
+     "3144227.5362901785",
+     "1061717.149665193"
+    ],
+    "vel_mps": [
+     "0.0",
+     "0.0",
+     "0.0"
+    ],
+    "quat_xyzw": [
+     "0.0",
+     "0.0",
+     "0.0",
+     "1.0"
+    ]
+   },
+   "expected_rc": 0,
+   "expected_sha256": "fbf55d85008816a7eb51f627b1472a66d94a965bd0eca630c26513ff4da2f5a7",
+   "stored_hash": null,
+   "prefix_hex": "01000000f301000041d42e60000000000000000004000100f5f9f94fe75b25411528a5c411fd47414575502655333041000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f03f"
+  },
+  {
+   "name": "negative_zero_canonical",
+   "op": "seal",
+   "note": "-0.0 canonicalized; hash must equal cambridge_itrf_tai",
+   "fields": {
+    "version": 1,
+    "body_naif": 399,
+    "time_sec": 1246190426,
+    "time_nsec": 0,
+    "frame": 1,
+    "time_scale": 1,
+    "pos_m": [
+     "3916909.5232774816",
+     "8057.749278632174",
+     "5016918.648210711"
+    ],
+    "vel_mps": [
+     "-0.0",
+     "-0.0",
+     "-0.0"
+    ],
+    "quat_xyzw": [
+     "-0.0",
+     "-0.0",
+     "-0.0",
+     "1.0"
+    ]
+   },
+   "expected_rc": 0,
+   "expected_sha256": "9f6cc1096562729a902167fd622e66a264a239f3e9a9d804414659e3ab97800e",
+   "stored_hash": null,
+   "prefix_hex": "010000008f0100005a5b474a000000000000000001000100abc1fac236e24d41c774b9d0bf79bf40c7487ca955235341000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f03f"
+  },
+  {
+   "name": "max_nsec",
+   "op": "seal",
+   "note": "Upper bound of time_nsec accepted",
+   "fields": {
+    "version": 1,
+    "body_naif": 399,
+    "time_sec": 1246190426,
+    "time_nsec": 999999999,
+    "frame": 1,
+    "time_scale": 1,
+    "pos_m": [
+     "3916909.5232774816",
+     "8057.749278632174",
+     "5016918.648210711"
+    ],
+    "vel_mps": [
+     "0.0",
+     "0.0",
+     "0.0"
+    ],
+    "quat_xyzw": [
+     "0.0",
+     "0.0",
+     "0.0",
+     "1.0"
+    ]
+   },
+   "expected_rc": 0,
+   "expected_sha256": "c1627abf6ad461d8c0ecee99d8e312295df380235d15727dbbf63ec08d326c15",
+   "stored_hash": null,
+   "prefix_hex": "010000008f0100005a5b474a00000000ffc99a3b01000100abc1fac236e24d41c774b9d0bf79bf40c7487ca955235341000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f03f"
+  },
+  {
+   "name": "negative_time_pre1970",
+   "op": "seal",
+   "note": "Negative time_sec is valid (signed)",
+   "fields": {
+    "version": 1,
+    "body_naif": 399,
+    "time_sec": -1,
+    "time_nsec": 0,
+    "frame": 1,
+    "time_scale": 1,
+    "pos_m": [
+     "3916909.5232774816",
+     "8057.749278632174",
+     "5016918.648210711"
+    ],
+    "vel_mps": [
+     "0.0",
+     "0.0",
+     "0.0"
+    ],
+    "quat_xyzw": [
+     "0.0",
+     "0.0",
+     "0.0",
+     "1.0"
+    ]
+   },
+   "expected_rc": 0,
+   "expected_sha256": "7dcfcd027158fd6ecb4b905a94afbd600150055582dec921ccdffa524e8e791d",
+   "stored_hash": null,
+   "prefix_hex": "010000008f010000ffffffffffffffff0000000001000100abc1fac236e24d41c774b9d0bf79bf40c7487ca955235341000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f03f"
+  },
+  {
+   "name": "rotated_quat_moving",
+   "op": "seal",
+   "note": "90 deg about Z, nonzero velocity",
+   "fields": {
+    "version": 1,
+    "body_naif": 399,
+    "time_sec": 1246190426,
+    "time_nsec": 0,
+    "frame": 1,
+    "time_scale": 1,
+    "pos_m": [
+     "3916909.5232774816",
+     "8057.749278632174",
+     "5016918.648210711"
+    ],
+    "vel_mps": [
+     "1.5",
+     "-2.25",
+     "0.125"
+    ],
+    "quat_xyzw": [
+     "0.0",
+     "0.0",
+     "0.7071067811865476",
+     "0.7071067811865476"
+    ]
+   },
+   "expected_rc": 0,
+   "expected_sha256": "5d8e237776ac244a374182a136545a6243d4ac2d1d52d6645cc227943f0a0e1e",
+   "stored_hash": null,
+   "prefix_hex": "010000008f0100005a5b474a000000000000000001000100abc1fac236e24d41c774b9d0bf79bf40c7487ca955235341000000000000f83f00000000000002c0000000000000c03f00000000000000000000000000000000cd3b7f669ea0e63fcd3b7f669ea0e63f"
+  },
+  {
+   "name": "non_unit_quat_accepted",
+   "op": "seal",
+   "note": "v1.0.0 does NOT enforce unit norm; sealed OK. Use aea_quat_check()",
+   "fields": {
+    "version": 1,
+    "body_naif": 399,
+    "time_sec": 1246190426,
+    "time_nsec": 0,
+    "frame": 1,
+    "time_scale": 1,
+    "pos_m": [
+     "3916909.5232774816",
+     "8057.749278632174",
+     "5016918.648210711"
+    ],
+    "vel_mps": [
+     "0.0",
+     "0.0",
+     "0.0"
+    ],
+    "quat_xyzw": [
+     "0.0",
+     "0.0",
+     "0.0",
+     "2.0"
+    ]
+   },
+   "expected_rc": 0,
+   "expected_sha256": "8738ccf5b3ddaa41ad2aca3d53ec478edf2ccfc5286883a871567626db778358",
+   "stored_hash": null,
+   "prefix_hex": "010000008f0100005a5b474a000000000000000001000100abc1fac236e24d41c774b9d0bf79bf40c7487ca9552353410000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040"
+  },
+  {
+   "name": "extreme_finite_values",
+   "op": "seal",
+   "note": "Largest finite, smallest subnormal and normal doubles",
+   "fields": {
+    "version": 1,
+    "body_naif": 399,
+    "time_sec": 0,
+    "time_nsec": 0,
+    "frame": 1,
+    "time_scale": 1,
+    "pos_m": [
+     "1.7976931348623157e+308",
+     "-1.7976931348623157e+308",
+     "5e-324"
+    ],
+    "vel_mps": [
+     "2.2250738585072014e-308",
+     "0.0",
+     "-1.0"
+    ],
+    "quat_xyzw": [
+     "0.0",
+     "0.0",
+     "0.0",
+     "1.0"
+    ]
+   },
+   "expected_rc": 0,
+   "expected_sha256": "f0821e955a0845ce3aaad3b38d10c341564615844ec4b39a51d54f5cef063afa",
+   "stored_hash": null,
+   "prefix_hex": "010000008f01000000000000000000000000000001000100ffffffffffffef7fffffffffffffefff010000000000000000000000000010000000000000000000000000000000f0bf000000000000000000000000000000000000000000000000000000000000f03f"
+  },
+  {
+   "name": "err_version_2",
+   "op": "seal",
+   "note": "AEA_ERR_VERSION",
+   "fields": {
+    "version": 2,
+    "body_naif": 399,
+    "time_sec": 1246190426,
+    "time_nsec": 0,
+    "frame": 1,
+    "time_scale": 1,
+    "pos_m": [
+     "3916909.5232774816",
+     "8057.749278632174",
+     "5016918.648210711"
+    ],
+    "vel_mps": [
+     "0.0",
+     "0.0",
+     "0.0"
+    ],
+    "quat_xyzw": [
+     "0.0",
+     "0.0",
+     "0.0",
+     "1.0"
+    ]
+   },
+   "expected_rc": -2,
+   "expected_sha256": null,
+   "stored_hash": null,
+   "prefix_hex": "020000008f0100005a5b474a000000000000000001000100abc1fac236e24d41c774b9d0bf79bf40c7487ca955235341000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f03f"
+  },
+  {
+   "name": "err_nsec_1e9",
+   "op": "seal",
+   "note": "AEA_ERR_NSEC_BOUND",
+   "fields": {
+    "version": 1,
+    "body_naif": 399,
+    "time_sec": 1246190426,
+    "time_nsec": 1000000000,
+    "frame": 1,
+    "time_scale": 1,
+    "pos_m": [
+     "3916909.5232774816",
+     "8057.749278632174",
+     "5016918.648210711"
+    ],
+    "vel_mps": [
+     "0.0",
+     "0.0",
+     "0.0"
+    ],
+    "quat_xyzw": [
+     "0.0",
+     "0.0",
+     "0.0",
+     "1.0"
+    ]
+   },
+   "expected_rc": -3,
+   "expected_sha256": null,
+   "stored_hash": null,
+   "prefix_hex": "010000008f0100005a5b474a0000000000ca9a3b01000100abc1fac236e24d41c774b9d0bf79bf40c7487ca955235341000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f03f"
+  },
+  {
+   "name": "err_frame_0",
+   "op": "seal",
+   "note": "AEA_ERR_FRAME (0 reserved INVALID)",
+   "fields": {
+    "version": 1,
+    "body_naif": 399,
+    "time_sec": 1246190426,
+    "time_nsec": 0,
+    "frame": 0,
+    "time_scale": 1,
+    "pos_m": [
+     "3916909.5232774816",
+     "8057.749278632174",
+     "5016918.648210711"
+    ],
+    "vel_mps": [
+     "0.0",
+     "0.0",
+     "0.0"
+    ],
+    "quat_xyzw": [
+     "0.0",
+     "0.0",
+     "0.0",
+     "1.0"
+    ]
+   },
+   "expected_rc": -4,
+   "expected_sha256": null,
+   "stored_hash": null,
+   "prefix_hex": "010000008f0100005a5b474a000000000000000000000100abc1fac236e24d41c774b9d0bf79bf40c7487ca955235341000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f03f"
+  },
+  {
+   "name": "err_frame_5",
+   "op": "seal",
+   "note": "AEA_ERR_FRAME (out of range)",
+   "fields": {
+    "version": 1,
+    "body_naif": 399,
+    "time_sec": 1246190426,
+    "time_nsec": 0,
+    "frame": 5,
+    "time_scale": 1,
+    "pos_m": [
+     "3916909.5232774816",
+     "8057.749278632174",
+     "5016918.648210711"
+    ],
+    "vel_mps": [
+     "0.0",
+     "0.0",
+     "0.0"
+    ],
+    "quat_xyzw": [
+     "0.0",
+     "0.0",
+     "0.0",
+     "1.0"
+    ]
+   },
+   "expected_rc": -4,
+   "expected_sha256": null,
+   "stored_hash": null,
+   "prefix_hex": "010000008f0100005a5b474a000000000000000005000100abc1fac236e24d41c774b9d0bf79bf40c7487ca955235341000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f03f"
+  },
+  {
+   "name": "err_time_scale_0",
+   "op": "seal",
+   "note": "AEA_ERR_TIME_SCALE",
+   "fields": {
+    "version": 1,
+    "body_naif": 399,
+    "time_sec": 1246190426,
+    "time_nsec": 0,
+    "frame": 1,
+    "time_scale": 0,
+    "pos_m": [
+     "3916909.5232774816",
+     "8057.749278632174",
+     "5016918.648210711"
+    ],
+    "vel_mps": [
+     "0.0",
+     "0.0",
+     "0.0"
+    ],
+    "quat_xyzw": [
+     "0.0",
+     "0.0",
+     "0.0",
+     "1.0"
+    ]
+   },
+   "expected_rc": -5,
+   "expected_sha256": null,
+   "stored_hash": null,
+   "prefix_hex": "010000008f0100005a5b474a000000000000000001000000abc1fac236e24d41c774b9d0bf79bf40c7487ca955235341000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f03f"
+  },
+  {
+   "name": "err_nan_position",
+   "op": "seal",
+   "note": "AEA_ERR_NON_FINITE",
+   "fields": {
+    "version": 1,
+    "body_naif": 399,
+    "time_sec": 1246190426,
+    "time_nsec": 0,
+    "frame": 1,
+    "time_scale": 1,
+    "pos_m": [
+     "nan",
+     "0.0",
+     "0.0"
+    ],
+    "vel_mps": [
+     "0.0",
+     "0.0",
+     "0.0"
+    ],
+    "quat_xyzw": [
+     "0.0",
+     "0.0",
+     "0.0",
+     "1.0"
+    ]
+   },
+   "expected_rc": -6,
+   "expected_sha256": null,
+   "stored_hash": null,
+   "prefix_hex": "010000008f0100005a5b474a000000000000000001000100000000000000f87f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f03f"
+  },
+  {
+   "name": "err_inf_velocity",
+   "op": "seal",
+   "note": "AEA_ERR_NON_FINITE",
+   "fields": {
+    "version": 1,
+    "body_naif": 399,
+    "time_sec": 1246190426,
+    "time_nsec": 0,
+    "frame": 1,
+    "time_scale": 1,
+    "pos_m": [
+     "3916909.5232774816",
+     "8057.749278632174",
+     "5016918.648210711"
+    ],
+    "vel_mps": [
+     "0.0",
+     "inf",
+     "0.0"
+    ],
+    "quat_xyzw": [
+     "0.0",
+     "0.0",
+     "0.0",
+     "1.0"
+    ]
+   },
+   "expected_rc": -6,
+   "expected_sha256": null,
+   "stored_hash": null,
+   "prefix_hex": "010000008f0100005a5b474a000000000000000001000100abc1fac236e24d41c774b9d0bf79bf40c7487ca9552353410000000000000000000000000000f07f0000000000000000000000000000000000000000000000000000000000000000000000000000f03f"
+  },
+  {
+   "name": "verify_hash_mismatch",
+   "op": "verify",
+   "note": "Cambridge with 1 bit flipped in stored hash -> AEA_ERR_MISMATCH (1)",
+   "fields": {
+    "version": 1,
+    "body_naif": 399,
+    "time_sec": 1246190426,
+    "time_nsec": 0,
+    "frame": 1,
+    "time_scale": 1,
+    "pos_m": [
+     "3916909.5232774816",
+     "8057.749278632174",
+     "5016918.648210711"
+    ],
+    "vel_mps": [
+     "0.0",
+     "0.0",
+     "0.0"
+    ],
+    "quat_xyzw": [
+     "0.0",
+     "0.0",
+     "0.0",
+     "1.0"
+    ]
+   },
+   "expected_rc": 1,
+   "expected_sha256": null,
+   "stored_hash": "9e6cc1096562729a902167fd622e66a264a239f3e9a9d804414659e3ab97800e",
+   "prefix_hex": "010000008f0100005a5b474a000000000000000001000100abc1fac236e24d41c774b9d0bf79bf40c7487ca955235341000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f03f"
+  }
+ ]
+}

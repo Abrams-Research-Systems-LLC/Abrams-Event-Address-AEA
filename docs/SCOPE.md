@@ -1,14 +1,14 @@
 # Architectural Scope & Boundaries: AEA-STATE/1
 
 ## 1. Executive Mission
-The primary objective of `aea-core` is to provide an uncompromising, zero-heap, bare-metal C-ABI static library (`libaea.a`) that autonomous platforms use to freeze their estimated state into an integrity-checked, byte-stable 136-byte record when communication links, GNSS, or mesh networks drop.
+The primary objective of `aea-core` is to provide a zero-heap, bare-metal C-ABI static library (`libaea.a`) that autonomous platforms use to freeze their estimated state into an integrity-checked, byte-stable 136-byte record. It does not itself mitigate GNSS denial, link loss, EW, or spoofing.
 
 ---
 
 ## 2. What AEA Is
 
 * **A Denied-Link State Labeler:** A real-time data formatter and cryptographic checksum generator. Flight computers call `aea_seal()` to freeze an EKF state estimate into flash memory before a crash, link drop, or power cycle.
-* **A Standardized Content Schema:** An unambiguous single-epoch binary schema ensuring that a UAV, an underwater AUV, a LEO satellite, and a planetary probe serialize telemetry under the exact same memory layout and coordinate chart tags.
+* **A Common Content Schema (proposed):** An unambiguous single-epoch binary schema ensuring that a UAV, an underwater AUV, a LEO satellite, and a planetary probe serialize telemetry under the exact same memory layout and coordinate chart tags.
 * **A FAIR Archival Primitive:** A deterministic format enabling future researchers (the "2040 Student Scenario") to parse multi-agency, multi-domain telemetry logs with a trivial 15-line parser without deciphering legacy CSV formats.
 * **A Binary Companion to CCSDS OEM:** While space agencies exchange large, text-heavy XML/KVN ephemeris files (ISO 26900:2024) between ground stations, AEA serves as the compact, zero-heap binary state snapshot sealed directly on microcontroller silicon.
 

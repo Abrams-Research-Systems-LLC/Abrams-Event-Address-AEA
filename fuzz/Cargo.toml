@@ -1,0 +1,29 @@
+[package]
+name = "aea-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+aea = { path = ".." }
+
+# Keep the fuzz crate out of the main (zero-dependency) workspace.
+[workspace]
+
+[[bin]]
+name = "verify_bytes"
+path = "fuzz_targets/verify_bytes.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "seal_roundtrip"
+path = "fuzz_targets/seal_roundtrip.rs"
+test = false
+doc = false
+bench = false

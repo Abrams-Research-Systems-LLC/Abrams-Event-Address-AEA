@@ -3,8 +3,14 @@ Copyright (c) 2026 Joshua Abrams
 
 This product includes software developed for the Abrams Event Address (AEA) project.
 
-Cryptographic Component:
-- The SHA-256 implementation located in `src/sha256.rs` is an original, self-contained,
-  zero-allocation cleanroom implementation of NIST FIPS 180-4 (Secure Hash Standard).
-- It does NOT depend on the external `sha2` crate or any third-party cryptography libraries.
-- Provenance details are documented in `third_party/sha256/ORIGIN.txt`.
+Cryptographic component:
+- src/sha256.rs is a self-contained, zero-allocation implementation of SHA-256 as
+  specified in NIST FIPS 180-4, written for this project. It does not depend on the
+  external `sha2` crate or any third-party cryptography library.
+- It is tested against the NIST FIPS 180-4 example vectors ("", "abc", and the
+  two-block 448-bit message) in src/sha256.rs, and against Python hashlib through
+  tests/kat/vectors.txt.
+- It is NOT a CAVP/ACVP-validated or CMVP (FIPS 140) certified module.
+
+(An earlier NOTICE pointed to third_party/sha256/ORIGIN.txt. That file never
+existed, and this paragraph replaces the reference.)

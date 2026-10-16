@@ -2,33 +2,68 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "aea-final" ]
   pull_request:
     branches: [ "main" ]
 
 jobs:
-  verify:
-    name: Build & Verify
+  host:
+    name: Host tests + independent KAT check
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: thumbv7em-none-eabihf
-
-      - name: Set up Python 3
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Run Rust test suite
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - name: Rust tests (unit, layout, 20 KAT vectors, exhaustive bit-flip)
         run: cargo test
-
-      - name: Cross-compile bare-metal static library (thumbv7em)
-        run: cargo build --target thumbv7em-none-eabihf --release
-
-      - name: Verify Cambridge KAT via Python CLI
+      - name: Python KAT generator matches committed vectors
+        run: python tools/gen_kat.py --check
+      - name: Python CLI verifies Cambridge KAT
         run: python tools/aea.py verify tests/kat/cambridge.bin
+      - name: C caller (host)
+        run: cargo build --release && make -C examples/c_caller run
+
+  embedded:
+    name: Bare-metal build (${{ matrix.target }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - thumbv6m-none-eabi          # Cortex-M0/M0+
+          - thumbv7em-none-eabihf       # Cortex-M4F/M7F
+          - thumbv8m.main-none-eabihf   # Cortex-M33
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup target add ${{ matrix.target }}
+      - run: cargo build --release --target ${{ matrix.target }}
+      - name: Code size of the AEA object
+        run: |
+          rustup component add llvm-tools-preview
+          SIZE=$(find "$(rustc --print sysroot)" -name llvm-size | head -1)
+          mkdir -p /tmp/o && cd /tmp/o && ar x $GITHUB_WORKSPACE/target/${{ matrix.target }}/release/libaea.a
+          $SIZE $(ls | grep '^aea')
+
+  big-endian:
+    name: Big-endian tests under QEMU (s390x)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install cross toolchain and QEMU
+        run: sudo apt-get update && sudo apt-get install -y qemu-user gcc-s390x-linux-gnu libc6-dev-s390x-cross
+      - run: rustup target add s390x-unknown-linux-gnu
+      - name: cargo test on s390x (big-endian) via qemu-user
+        env:
+          CARGO_TARGET_S390X_UNKNOWN_LINUX_GNU_LINKER: s390x-linux-gnu-gcc
+          CARGO_TARGET_S390X_UNKNOWN_LINUX_GNU_RUNNER: qemu-s390x -L /usr/s390x-linux-gnu
+        run: cargo test --target s390x-unknown-linux-gnu
+
+  fuzz-smoke:
+    name: Fuzz smoke (60 s per target, nightly)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup toolchain install nightly --profile minimal && cargo +nightly install cargo-fuzz --locked
+      - run: |
+          cd fuzz
+          cargo +nightly fuzz run verify_bytes -- -max_total_time=60
+          cargo +nightly fuzz run seal_roundtrip -- -max_total_time=60

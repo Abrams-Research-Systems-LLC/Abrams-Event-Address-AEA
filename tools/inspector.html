@@ -419,7 +419,7 @@
 
 <div class="container">
   <header>
-    <div class="badge-tag">AEA-STATE/1 Standard · 136-Byte Binary Wire Record</div>
+    <div class="badge-tag">AEA-STATE/1 · 136-Byte Binary Wire Record</div>
     <h1>AEA-STATE/1 Record Inspector</h1>
     <div class="sub">
       Deterministic 4D Event Telemetry, Geodetic Decoding, and Client-Side Cryptographic Seal Verification via W3C WebCrypto.
@@ -448,7 +448,7 @@
   </div>
 
   <div class="tamper-alert" id="tamperAlert">
-    <strong>Cosmic Ray Simulation Active:</strong> Bit 0 of Byte 24 (Position X) was flipped in memory. This represents a single-event upset (SEU) from space radiation or a 1-millimeter positional deviation. Notice how the SHA-256 seal immediately fails verification below, preventing autonomous flight systems from acting on corrupted data.
+    <strong>Cosmic Ray Simulation Active:</strong> Bit 0 of Byte 24 (Position X) was flipped in memory. This models a single-event upset (SEU) or storage corruption. Flipping the least-significant mantissa bit of X at ~3.9e6 m changes it by about 0.5 nanometres. Even that change makes the SHA-256 check fail below, so a consumer can reject the corrupted record. (Integrity only: an unkeyed digest does not stop a deliberate attacker who recomputes it.)
   </div>
 
   <div class="badge-card valid" id="badgeCard">
@@ -486,7 +486,7 @@
       </div>
       <div class="field-val" id="f_version">-</div>
       <div class="field-explainer">
-        <strong>Wire Alignment:</strong> Version 1 represents the standard AEA-STATE/1 structure. Unpacked and 8-byte naturally aligned for radiation-hardened space hardware (LEON, ARM Cortex-M, RISC-V) without heap allocators or serialization penalties.
+        <strong>Wire Alignment:</strong> Version 1 represents the AEA-STATE/1 structure. Unpacked and 8-byte naturally aligned for radiation-hardened space hardware (LEON, ARM Cortex-M, RISC-V) without heap allocators or serialization penalties.
       </div>
     </div>
 
@@ -593,7 +593,7 @@
   </div>
 
   <footer>
-    Abrams Event Address (AEA) · Standard AEA-STATE/1 (136 Bytes) · Pure Client-Side Execution ·
+    Abrams Event Address (AEA) · AEA-STATE/1 (136 Bytes) · Pure Client-Side Execution ·
     <a href="https://github.com/unlimitedinfinit/Abrams-Event-Address-AEA" target="_blank">GitHub Repository ↗</a>
   </footer>
 </div>
@@ -738,12 +738,12 @@ async function renderInspector(arrayBuffer, sourceName, tamperedBit = null) {
   badgeTitle.textContent = isValid ? `✓ 136-BYTE INTEGRITY SEAL VERIFIED [${sourceName}]` : `✗ INTEGRITY SEAL MISMATCH [${sourceName}]`;
   badgeSubtitle.textContent = isValid 
     ? "SHA-256 trailer matches the 104-byte Little-Endian prefix computed live via WebCrypto." 
-    : "Computed SHA-256 digest diverged from stored trailer (bit corruption or positional tampering detected).";
+    : "Computed SHA-256 digest diverged from stored trailer (bit corruption or modification detected; integrity only, not authentication).";
 
   tamperAlert.style.display = isTampered ? 'block' : 'none';
 
   // Fields
-  document.getElementById('f_version').textContent = `0x${v.toString(16).padStart(8, '0')} (${v}) -> AEA-STATE/1 Standard`;
+  document.getElementById('f_version').textContent = `0x${v.toString(16).padStart(8, '0')} (${v}) -> AEA-STATE/1`;
   document.getElementById('f_body').textContent = `NAIF ID ${body} -> ${body === 399 ? "Earth Geocenter (Mass Center)" : (body === 301 ? "Moon Geocenter" : "Primary Body")}`;
   document.getElementById('f_time').textContent = `${timeSec}.${String(timeNsec).padStart(9, '0')} sec (${TIME_SCALES[timeScale] || timeScale})`;
   document.getElementById('f_frame_scale').textContent = `Frame: ${FRAME_NAMES[frame] || frame} | Scale: ${TIME_SCALES[timeScale] || timeScale}`;

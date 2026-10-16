@@ -1,4 +1,4 @@
 [toolchain]
 channel = "1.96.0"
-targets = ["thumbv7em-none-eabihf"]
+targets = ["thumbv6m-none-eabi", "thumbv7em-none-eabihf", "thumbv8m.main-none-eabihf"]
 components = ["llvm-tools-preview"]

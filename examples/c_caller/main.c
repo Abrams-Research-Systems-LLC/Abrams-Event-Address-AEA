@@ -70,13 +70,13 @@ int main(void) {
 
     /* 5. Verify Record */
     rc = aea_verify(&rec);
-    printf("aea_verify() return code (untampered): %d\n", rc);
+    printf("aea_verify() return code (unmodified): %d\n", rc);
     assert(rc == AEA_OK);
 
-    /* 6. Tamper Detection Test */
+    /* 6. Modification Detection Test (integrity only; unkeyed digest is not authentication) */
     rec.pos_m[0] += 0.001; /* Alter X coordinate by 1 mm */
     rc = aea_verify(&rec);
-    printf("aea_verify() return code (tampered +1mm): %d\n", rc);
+    printf("aea_verify() return code (modified +1mm): %d\n", rc);
     assert(rc == AEA_ERR_MISMATCH);
 
     printf("=== All AEA C-ABI checks passed successfully! ===\n");
