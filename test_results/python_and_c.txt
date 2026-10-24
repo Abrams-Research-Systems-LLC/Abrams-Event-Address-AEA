@@ -1,0 +1,12 @@
+KAT files up to date (20 vectors)
+OK: SHA-256 integrity seal verified (9f6cc1096562729a902167fd622e66a264a239f3e9a9d804414659e3ab97800e).
+Linking main.c against host static library...
+=== AEA-STATE/1 C Caller Verification ===
+AEA Library ABI Version: 0x00010000 (Major 1, Minor 0)
+sizeof(AeaRecord): 136 bytes
+aea_seal() return code: 0
+Sealed SHA-256 Digest: 9f6cc1096562729a902167fd622e66a264a239f3e9a9d804414659e3ab97800e
+KAT Verification: Sealed digest matches published Cambridge vector 9f6cc109... byte-for-byte!
+aea_verify() return code (unmodified): 0
+aea_verify() return code (modified +1mm): 1
+=== All AEA C-ABI checks passed successfully! ===

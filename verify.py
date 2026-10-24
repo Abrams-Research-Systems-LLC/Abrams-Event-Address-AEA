@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-verify.py — Cross-Platform Auditor Reproduction Script for AEA-STATE/1 v1.0.0
+verify.py — Self-Contained Auditor Reproduction Script for AEA-STATE/1 v1.0.0
 Works on Windows, Linux, and macOS.
 Zero external Python dependencies (standard library only).
-When Cargo/Rust is installed, runs Rust unit, property, and layout tests.
+Recomputes hashes, layout, 20 KAT vectors, property-level bit-flips, demos,
+and (when Rust toolchain is present) tests and symbol exports. Never accesses `../`.
 """
 
 import sys
@@ -51,8 +52,8 @@ def main():
     print(f"  Repo Directory: {repo_dir}")
     print("===================================================================")
 
-    # 1. Cambridge KAT binary check
-    check_banner("1. Cambridge KAT Binary & SHA-256 Seal Verification")
+    # Check 1: Cambridge KAT binary check
+    check_banner("Check 1: Cambridge KAT Binary & SHA-256 Seal Verification")
     camb_bin_path = os.path.join(repo_dir, "tests", "kat", "cambridge.bin")
     if not os.path.exists(camb_bin_path):
         fail(f"Missing {camb_bin_path}")
@@ -60,21 +61,19 @@ def main():
         with open(camb_bin_path, "rb") as f:
             data = f.read()
         if len(data) == RECORD_BYTES:
-            ok(f"Cambridge record size is exactly {RECORD_BYTES} bytes")
+            prefix = data[:PREFIX_BYTES]
+            stored_hash = data[PREFIX_BYTES:].hex()
+            calc_hash = hashlib.sha256(prefix).hexdigest()
+
+            if calc_hash == CAMBRIDGE_DIGEST and stored_hash == CAMBRIDGE_DIGEST:
+                ok(f"Record is exactly {RECORD_BYTES} B, seal covers [0..{PREFIX_BYTES}) matching {CAMBRIDGE_DIGEST[:16]}...{CAMBRIDGE_DIGEST[-8:]}")
+            else:
+                fail(f"Digest mismatch! Calculated: {calc_hash}, Stored: {stored_hash}")
         else:
             fail(f"Record size is {len(data)} B (expected {RECORD_BYTES} B)")
 
-        prefix = data[:PREFIX_BYTES]
-        stored_hash = data[PREFIX_BYTES:].hex()
-        calc_hash = hashlib.sha256(prefix).hexdigest()
-
-        if calc_hash == CAMBRIDGE_DIGEST and stored_hash == CAMBRIDGE_DIGEST:
-            ok(f"SHA-256 seal covers [0..{PREFIX_BYTES}) and matches canonical digest: {CAMBRIDGE_DIGEST[:16]}...{CAMBRIDGE_DIGEST[-8:]}")
-        else:
-            fail(f"Digest mismatch! Calculated: {calc_hash}, Stored: {stored_hash}")
-
-    # 2. Independent Python KAT Generator Check
-    check_banner("2. Independent Python KAT Generator Check (20 vectors)")
+    # Check 2: Independent Python KAT Generator Check
+    check_banner("Check 2: Independent Python KAT Generator Check (20 vectors)")
     gen_kat_path = os.path.join(repo_dir, "tools", "gen_kat.py")
     if os.path.exists(gen_kat_path):
         res = subprocess.run([sys.executable, gen_kat_path, "--check"], capture_output=True, text=True)
@@ -85,8 +84,8 @@ def main():
     else:
         fail(f"Missing {gen_kat_path}")
 
-    # 3. Bitflip Property Check via Python Simulation
-    check_banner("3. Exhaustive Bit-Flip Corruption Detection Simulation (Python)")
+    # Check 3: Exhaustive Bitflip Property Check via Python Simulation
+    check_banner("Check 3: Exhaustive Single-Bit-Flip Corruption Detection (1,088 bits)")
     if os.path.exists(camb_bin_path):
         with open(camb_bin_path, "rb") as f:
             base_data = bytearray(f.read())
@@ -95,7 +94,6 @@ def main():
         detected = 0
         zero_sign_absorbed = 0
 
-        # Import canon / parse logic from aea.py
         sys.path.insert(0, os.path.join(repo_dir, "tools"))
         try:
             import aea
@@ -116,8 +114,22 @@ def main():
         except Exception as e:
             fail(f"Bitflip simulation error: {e}")
 
-    # 4. Cargo / Rust Tests (if cargo available)
-    check_banner("4. Rust Automated Test Suite (14 Tests)")
+    # Check 4: Automated Demos Math & Execution
+    check_banner("Check 4: Automated Demos Math & Output Verification")
+    demo1 = os.path.join(repo_dir, "examples", "log_merge_demo.py")
+    demo2 = os.path.join(repo_dir, "examples", "mission_timeline_demo.py")
+    if os.path.exists(demo1) and os.path.exists(demo2):
+        r1 = subprocess.run([sys.executable, demo1], capture_output=True, text=True)
+        r2 = subprocess.run([sys.executable, demo2], capture_output=True, text=True)
+        if r1.returncode == 0 and "925.0 meters" in r1.stdout and r2.returncode == 0 and "[FAIL]" not in r2.stdout:
+            ok("examples/log_merge_demo.py and examples/mission_timeline_demo.py executed cleanly with exact math")
+        else:
+            fail(f"Demo execution failed or produced unexpected text.\nDemo 1:\n{r1.stdout}\nDemo 2:\n{r2.stdout}")
+    else:
+        fail("Missing demo files in examples/")
+
+    # Check 5: Cargo / Rust Tests (14 tests)
+    check_banner("Check 5: Rust Automated Test Suite (14 Tests)")
     cargo_bin = shutil.which("cargo")
     if cargo_bin:
         res = subprocess.run(["cargo", "test"], capture_output=True, text=True)
@@ -126,7 +138,6 @@ def main():
         if res.returncode == 0:
             total_passed = 0
             for l in passed_lines:
-                # e.g. "test result: ok. 7 passed;"
                 parts = l.split()
                 if "passed;" in parts:
                     idx = parts.index("passed;")
@@ -140,8 +151,8 @@ def main():
     else:
         skip("cargo not found in PATH; skipping Rust compilation tests")
 
-    # 5. C ABI Interface Symbols Verification
-    check_banner("5. C ABI Interface Verification")
+    # Check 6: C ABI Interface & Exported Symbols
+    check_banner("Check 6: C ABI Interface & Exported Symbols")
     header_path = os.path.join(repo_dir, "include", "aea.h")
     if os.path.exists(header_path):
         with open(header_path, "r", encoding="utf-8") as f:
@@ -158,11 +169,9 @@ def main():
     else:
         fail(f"Missing {header_path}")
 
-    # 6. Microcontroller Build Footprint Evidence Check
-    check_banner("6. Embedded Footprint & Code Size Artifact Check")
+    # Check 7: Committed Embedded Sizes Artifact Check
+    check_banner("Check 7: Embedded Footprint & Code Size Artifact Check")
     sizes_txt = os.path.join(repo_dir, "test_results", "embedded_sizes.txt")
-    if not os.path.exists(sizes_txt):
-        sizes_txt = os.path.join(repo_dir, "..", "test_results", "embedded_sizes.txt")
     if os.path.exists(sizes_txt):
         with open(sizes_txt, "r") as f:
             stxt = f.read()
@@ -171,11 +180,12 @@ def main():
         else:
             fail("embedded_sizes.txt content does not match expected numbers")
     else:
-        skip("test_results/embedded_sizes.txt not found at relative path")
+        fail("test_results/embedded_sizes.txt not found in repository")
 
     # Final Summary
+    total_checks = pass_count + fail_count + skip_count
     print("\n===================================================================")
-    print(f"  VERIFICATION SUMMARY: {pass_count} PASSED, {fail_count} FAILED, {skip_count} SKIPPED")
+    print(f"  VERIFICATION SUMMARY: {pass_count} PASSED, {fail_count} FAILED, {skip_count} SKIPPED (Total {total_checks} Checks)")
     print("===================================================================")
 
     if fail_count > 0:
