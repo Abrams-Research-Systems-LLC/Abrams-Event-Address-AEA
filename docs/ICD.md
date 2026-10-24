@@ -14,13 +14,13 @@ The `AeaRecord` structure occupies exactly 136 bytes in memory. The field orderi
 | Offset | Size (B) | Type | Field Name | Description |
 |:---:|:---:|:---|---|---|
 | `0` | 4 | `uint32_t` | `version` | Wire format version. Must be `1`. |
-| `4` | 4 | `uint32_t` | `body_naif` | NAIF Body ID (`399` = Earth geocenter, `499` = Mars, `0` = none / no body). |
+| `4` | 4 | `uint32_t` | `body_naif` | NAIF Body ID (`399` = Earth geocenter, `499` = Mars, `0` = none, **not** a barycenter). |
 | `8` | 8 | `int64_t` | `time_sec` | Integer seconds elapsed since 1970-01-01T00:00:00 on the declared `time_scale`. |
 | `16` | 4 | `uint32_t` | `time_nsec` | Integer nanoseconds ($0 \le \text{nsec} \le 999,999,999$). |
 | `20` | 2 | `uint16_t` | `frame` | Coordinate reference chart enum (`enum AeaFrame`). |
 | `22` | 2 | `uint16_t` | `time_scale` | Coordinate time scale enum (`enum AeaTimeScale`). |
 | `24` | 24 | `double[3]` | `pos_m` | Cartesian position $[X, Y, Z]$ in metres in the declared `frame`. |
-| `48` | 24 | `double[3]` | `vel_mps` | Cartesian velocity $[V_x, V_y, V_z]$ in metres/second in the declared `frame`. |
+| `48` | 24 | `double[3]` | `vel_mps` | Cartesian velocity $[V_x, V_y, V_z]$ in metres/second in the declared `frame` only (never a sum of motions across frames). |
 | `72` | 32 | `double[4]` | `quat_xyzw` | Unit attitude quaternion $[q_x, q_y, q_z, q_w]$ from frame to body. Null: `[0,0,0,1]`. |
 | `104` | 32 | `uint8_t[32]`| `hash` | SHA-256 digest computed over the 104-byte prefix (offsets `[0, 104)`). |
 
@@ -30,7 +30,7 @@ The `AeaRecord` structure occupies exactly 136 bytes in memory. The field orderi
 ### 2.1 Critical Serialization & Invariant Rules
 1. **Canonical Little-Endian Encoding:** The 32-byte `hash` trailer is the SHA-256 digest of the **canonical Little-Endian encoding** of fields 0 through 103 (offsets `[0, 104)`). It is strictly **not** a raw `memcpy` of the in-memory struct, preventing compiler padding and host endianness divergence from corrupting the wire digest.
 2. **Negative-Zero Canonicalization:** During prefix encoding, IEEE-754 negative zeros (`-0.0`) are canonicalized to `+0.0` for hash computation. `aea_verify` canonicalizes prefix bytes during verification; an in-memory struct holding `-0.0` will verify against a sealed `+0.0` hash without mutating caller memory.
-3. **Quaternion Normalization & Null Identity Collision:** Attitude quaternion `quat_xyzw` is stored as four 64-bit `double`s. **Unit length ($\|\mathbf{q}\| = 1.0$) is NOT enforced or normalized by `aea_seal`/`aea_verify`** (unchanged in v1.0.0). Producers SHOULD normalize before sealing; consumers MAY call the optional `aea_quat_check(record, tol_sq)` (e.g. `tol_sq = 1e-9`), which does not alter the wire format. Identity quaternion `[0, 0, 0, 1]` represents either an unmeasured/null attitude or an attitude aligned with chart axes (a known v1 collision).
+3. **Quaternion Normalization & Null Identity Collision:** Attitude quaternion `quat_xyzw` is stored as four 64-bit `double`s. **Unit length ($\|\mathbf{q}\| = 1.0$) is NOT enforced or normalized by `aea_seal`/`aea_verify`** (unchanged in v1.0.0). Producers SHOULD normalize before sealing. Consumers that need unit norm should check $| \|q\|^2 - 1 | \le \epsilon$ in their own code; v1 provides no validity flag and no check function. Identity quaternion `[0, 0, 0, 1]` represents either an unmeasured/null attitude or an attitude aligned with chart axes (a known v1 collision).
 4. **Terrestrial Coordinates & Epoch Drift:** `pos_m` in `ITRF2020` is valid strictly at the **event epoch** (`time_sec` / `time_nsec`). Because continental tectonic plates shift over time (e.g. Eurasia moves $\sim 2.21\text{ cm/year}$, or $68.5\text{ cm}$ over 31 years), comparing coordinates across multi-year baselines requires the consumer to apply an external Plate Motion Model (PMM).
 5. **KAT Geodetic Provenance:** Known-Answer Test (KAT) ECEF coordinates (such as the Cambridge vector) are derived directly from the **WGS 84 reference ellipsoid**, tagged `ITRF2020` for test purposes. They are deterministic mathematical test vectors, not official IERS station coordinates.
 
@@ -78,7 +78,6 @@ All API functions return signed 32-bit integers (`int32_t`):
 | `-4` | `AEA_ERR_FRAME` | Unrecognized coordinate frame enum ($< 1$ or $> 4$). |
 | `-5` | `AEA_ERR_TIME_SCALE` | Unrecognized time scale enum ($< 1$ or $> 4$). |
 | `-6` | `AEA_ERR_NON_FINITE` | Non-finite float (`NaN`, $+\infty$, $-\infty$) in position, velocity, or quaternion. |
-| `-7` | `AEA_ERR_QUAT_NORM` | Returned **only** by the optional `aea_quat_check()`; never by seal/verify. |
 
 ---
 
@@ -106,8 +105,16 @@ AEA:399:TAI:1246190426.0:ITRF2020:3916909.5232774816,8057.749278632174,5016918.6
 ### 6.2 Cryptographic Integrity vs. Provenance
 The embedded SHA-256 hash guarantees data integrity against memory corruption and transmission bit-rot. It is an unkeyed digest, not an authenticated digital signature. Provenance authentication (e.g. Ed25519) should be applied as an outer container wrapper around the 136-byte record.
 
-### 6.3 Time origin and J2000
-`time_sec` counts seconds since 1970-01-01T00:00:00 **on the declared scale**. For TAI, a UTC instant maps to `POSIX + (TAI-UTC) - 8`. Example: 2009-06-28T12:00:00 UTC gives 1246190400 + 34 - 8 = 1246190426. The J2000.0 epoch (2000-01-01T12:00:00 TT = 11:59:27.816 TAI) is `time_sec` 946727959.816 on TAI. Seconds since J2000 (TT) = `time_sec`(TAI) - 946727959.816 = 299,462,466.184 s for the Cambridge example.
+### 6.3 Time origin (1970 on the declared scale) and the −8 TAI rule
+`time_sec` counts seconds since 1970-01-01T00:00:00 **on the declared `time_scale`**. It is not POSIX/UTC, and there is no J-epoch.
+For TAI and a post-1972 UTC instant, the operational conversion is:
+
+`time_sec(TAI) = POSIX + (TAI − UTC) − 8`
+
+TAI−UTC was about 8 s on 1970-01-01, which is where the −8 comes from. Example: 2009-06-28T12:00:00 UTC gives 1246190400 + 34 − 8 = **1246190426**. For TT, add 32.184 s to the TAI value. TCB/TDB values must be produced by the caller's own time library.
+
+### 6.3a Body 0
+`body_naif = 0` means **none** (no central body). It is **not** the Solar System Barycenter. The origin of BCRS states is implied by `frame = 3`, not by `body_naif`.
 
 ### 6.4 Known-answer vectors
 `tests/kat/vectors.{txt,json}` hold 20 vectors generated by `tools/gen_kat.py` using Python `hashlib`, independently of the Rust code. `tests/kat_vectors.rs` checks the Rust library against all of them.

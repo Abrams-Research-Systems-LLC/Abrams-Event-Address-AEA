@@ -104,7 +104,7 @@
   {
    "name": "earth_bcrs_tdb",
    "op": "seal",
-   "note": "Illustrative barycentric state, body 0 (SSB); 2000-01-01T12:00:00 UTC",
+   "note": "Illustrative BCRS state; body_naif 0 = none (NOT a barycenter; the BCRS origin is implied by the frame); 2000-01-01T12:00:00 UTC",
    "fields": {
     "version": 1,
     "body_naif": 0,
@@ -137,7 +137,7 @@
   {
    "name": "earth_bcrs_tcb",
    "op": "seal",
-   "note": "Same as above, TCB tag (different hash by design)",
+   "note": "Same as above, TCB tag; body 0 = none (different hash by design)",
    "fields": {
     "version": 1,
     "body_naif": 0,
@@ -335,7 +335,7 @@
   {
    "name": "non_unit_quat_accepted",
    "op": "seal",
-   "note": "v1.0.0 does NOT enforce unit norm; sealed OK. Use aea_quat_check()",
+   "note": "v1.0.0 does NOT enforce unit norm; sealed OK (caller's responsibility)",
    "fields": {
     "version": 1,
     "body_naif": 399,

@@ -1,6 +1,6 @@
 # AEA-AUTH/1: authenticated profile (DRAFT, NOT IMPLEMENTED)
 
-> **Status: DRAFT for discussion. Nothing in this document is implemented, tested, or interoperable.** It does not change AEA-STATE/1 v1.0.0. Field sizes, algorithms, and codes may change. No security claim may be made for AEA until this profile is implemented with published test vectors and reviewed independently.
+> **Status: DRAFT for discussion. Nothing in this document is implemented, tested, or interoperable.** AEA-AUTH/1 is a **separate future profile**; it is never part of AEA-STATE/1, and STATE/1 records stay exactly 136 bytes with an unkeyed integrity hash. Any uncertainty (covariance) sidecar would likewise be a separate future profile, never part of STATE/1. It does not change AEA-STATE/1 v1.0.0. Field sizes, algorithms, and codes may change. No security claim may be made for AEA until this profile is implemented with published test vectors and reviewed independently.
 
 ## 1. Problem
 The AEA-STATE/1 digest is unkeyed SHA-256. It detects accidental corruption, but an adversary who can modify a record can recompute the digest. AEA-AUTH/1 adds three things:

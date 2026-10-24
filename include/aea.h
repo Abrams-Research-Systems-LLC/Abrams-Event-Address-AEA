@@ -32,7 +32,6 @@ extern "C" {
 #define AEA_ERR_FRAME      (-4)  /* Unrecognized or invalid coordinate frame enum */
 #define AEA_ERR_TIME_SCALE (-5)  /* Unrecognized or invalid time scale enum */
 #define AEA_ERR_NON_FINITE (-6)  /* Non-finite float (NaN, +Inf, -Inf) encountered */
-#define AEA_ERR_QUAT_NORM  (-7)  /* aea_quat_check() only: quaternion not unit norm within tolerance */
 
 /**
  * Coordinate Time Scale Enums.
@@ -64,7 +63,7 @@ enum AeaFrame {
  */
 typedef struct {
     uint32_t version;       /* Offset  0: Wire format version (must be 1) */
-    uint32_t body_naif;     /* Offset  4: NAIF Body ID (399=Earth, 499=Mars, 0=none) */
+    uint32_t body_naif;     /* Offset  4: NAIF Body ID (399=Earth, 499=Mars, 0=none, NOT a barycenter) */
     int64_t  time_sec;      /* Offset  8: Integer seconds elapsed since 1970-01-01 on declared scale */
     uint32_t time_nsec;     /* Offset 16: Integer nanoseconds (0 to 999,999,999) */
     uint16_t frame;         /* Offset 20: Coordinate frame enum (enum AeaFrame) */
@@ -99,14 +98,6 @@ int32_t aea_seal(AeaRecord *record);
  *         or negative error code on validation failure.
  */
 int32_t aea_verify(const AeaRecord *record);
-
-/**
- * OPTIONAL helper (does not change the AEA-STATE/1 wire format or seal/verify behaviour).
- * aea_seal() does NOT enforce unit norm; callers that need it should call this first.
- * Returns AEA_OK if quat_xyzw is finite and | |q|^2 - 1 | <= tol_sq (e.g. 1e-9),
- * AEA_ERR_QUAT_NORM, AEA_ERR_NON_FINITE, or AEA_ERR_NULL_PTR.
- */
-int32_t aea_quat_check(const AeaRecord *record, double tol_sq);
 
 /**
  * Returns library ABI version as ((MAJOR << 16) | MINOR).

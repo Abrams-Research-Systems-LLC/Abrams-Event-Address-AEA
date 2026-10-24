@@ -34,8 +34,6 @@ pub const AEA_ERR_NSEC_BOUND: i32 = -3;
 pub const AEA_ERR_FRAME: i32 = -4;
 pub const AEA_ERR_TIME_SCALE: i32 = -5;
 pub const AEA_ERR_NON_FINITE: i32 = -6;
-/// Returned ONLY by `quat_check` / `aea_quat_check`. Never returned by seal/verify (v1.0.0 behaviour unchanged).
-pub const AEA_ERR_QUAT_NORM: i32 = -7;
 
 /**
  * 136-byte Canonical AEA State Record.
@@ -177,26 +175,6 @@ pub fn verify(record: &AeaRecord) -> i32 {
     }
 }
 
-/**
- * Optional attitude check (does not affect the wire format, seal, or verify).
- * Returns AEA_OK if all quaternion components are finite and | |q|^2 - 1 | <= tol_sq,
- * else AEA_ERR_NON_FINITE or AEA_ERR_QUAT_NORM. No sqrt needed (no_std friendly).
- * A non-finite or negative tol_sq is treated as 0 (exact unit norm required).
- */
-pub fn quat_check(r: &AeaRecord, tol_sq: f64) -> i32 {
-    let q = &r.quat_xyzw;
-    for &x in q.iter() {
-        if !x.is_finite() {
-            return AEA_ERR_NON_FINITE;
-        }
-    }
-    let tol = if tol_sq.is_finite() && tol_sq > 0.0 { tol_sq } else { 0.0 };
-    let n2 = q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3];
-    let d = n2 - 1.0;
-    let ad = if d < 0.0 { -d } else { d };
-    if ad <= tol { AEA_OK } else { AEA_ERR_QUAT_NORM }
-}
-
 pub fn zeroed() -> AeaRecord {
     AeaRecord {
         version: VERSION_WIRE,
@@ -273,22 +251,6 @@ mod tests {
         rec = zeroed();
         rec.quat_xyzw[3] = f64::NEG_INFINITY;
         assert_eq!(seal(&mut rec), AEA_ERR_NON_FINITE);
-    }
-
-    #[test]
-    fn test_quat_check() {
-        let mut rec = zeroed();
-        assert_eq!(quat_check(&rec, 1e-9), AEA_OK);
-        rec.quat_xyzw = [0.0, 0.0, 0.7071067811865476, 0.7071067811865476];
-        assert_eq!(quat_check(&rec, 1e-12), AEA_OK);
-        rec.quat_xyzw = [0.0, 0.0, 0.0, 2.0];
-        assert_eq!(quat_check(&rec, 1e-6), AEA_ERR_QUAT_NORM);
-        // seal still accepts it: v1.0.0 wire behaviour is unchanged
-        assert_eq!(seal(&mut rec), AEA_OK);
-        rec.quat_xyzw[0] = f64::NAN;
-        assert_eq!(quat_check(&rec, 1e-6), AEA_ERR_NON_FINITE);
-        rec.quat_xyzw = [0.0, 0.0, 0.0, 1.0];
-        assert_eq!(quat_check(&rec, f64::NAN), AEA_OK);
     }
 
     #[test]

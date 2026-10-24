@@ -4,7 +4,6 @@
 //! - aea_seal
 //! - aea_verify
 //! - aea_version
-//! - aea_quat_check (optional helper; does not change the wire format)
 
 #![cfg_attr(all(not(test), target_os = "none"), no_std)]
 #![deny(warnings)]
@@ -13,9 +12,9 @@ mod sha256;
 pub mod state;
 
 pub use state::{
-    canon, encode_prefix, quat_check, seal, validate, verify, zeroed, AeaRecord,
+    canon, encode_prefix, seal, validate, verify, zeroed, AeaRecord,
     AEA_ERR_FRAME, AEA_ERR_MISMATCH, AEA_ERR_NON_FINITE, AEA_ERR_NSEC_BOUND,
-    AEA_ERR_NULL_PTR, AEA_ERR_QUAT_NORM, AEA_ERR_TIME_SCALE, AEA_ERR_VERSION, AEA_OK,
+    AEA_ERR_NULL_PTR, AEA_ERR_TIME_SCALE, AEA_ERR_VERSION, AEA_OK,
     FRAME_BCRS, FRAME_BODY, FRAME_GCRS, FRAME_INVALID, FRAME_ITRF2020,
     HASH_BYTES, PREFIX_BYTES, RECORD_BYTES, TIME_INVALID, TIME_TAI,
     TIME_TCB, TIME_TDB, TIME_TT, VERSION_WIRE,
@@ -58,21 +57,6 @@ pub unsafe extern "C" fn aea_verify(record: *const AeaRecord) -> i32 {
         return AEA_ERR_NULL_PTR;
     }
     state::verify(&*record)
-}
-
-/**
- * Optional helper: checks that the attitude quaternion is finite and has unit norm
- * within | |q|^2 - 1 | <= tol_sq. Does not modify the record and does not affect
- * aea_seal/aea_verify (AEA-STATE/1 v1.0.0 wire format and semantics are unchanged).
- *
- * @return AEA_OK, AEA_ERR_QUAT_NORM (-7), AEA_ERR_NON_FINITE (-6), or AEA_ERR_NULL_PTR.
- */
-#[no_mangle]
-pub unsafe extern "C" fn aea_quat_check(record: *const AeaRecord, tol_sq: f64) -> i32 {
-    if record.is_null() {
-        return AEA_ERR_NULL_PTR;
-    }
-    state::quat_check(&*record, tol_sq)
 }
 
 /**

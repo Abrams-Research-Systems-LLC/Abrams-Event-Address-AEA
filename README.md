@@ -9,7 +9,7 @@ The CI badge above is GitHub's live workflow status, not a static image.
 
 ## What it is
 - A fixed, naturally aligned, 136-byte binary record. Its contents are: body (NAIF ID), time (seconds and nanoseconds on a declared time scale), reference frame, position, velocity, and an attitude quaternion. A SHA-256 digest of the first 104 bytes follows.
-- A small C-callable library: `aea_seal`, `aea_verify`, `aea_version`, and the optional `aea_quat_check`.
+- A small C-callable library: exactly three functions: `aea_seal`, `aea_verify`, `aea_version`.
 - **Integrity only.** It detects accidental modification such as bit flips, memory or flash corruption, and truncation.
 
 ## What it is not
@@ -22,7 +22,7 @@ The CI badge above is GitHub's live workflow status, not a static image.
 | Offset | Size | Type | Field |
 |---:|---:|---|---|
 | 0 | 4 | u32 | `version` (=1) |
-| 4 | 4 | u32 | `body_naif` (399 Earth, 499 Mars, 0 none) |
+| 4 | 4 | u32 | `body_naif` (399 Earth geocenter, 499 Mars, 0 = none, not a barycenter) |
 | 8 | 8 | i64 | `time_sec`: seconds since 1970-01-01T00:00:00 on the declared scale |
 | 16 | 4 | u32 | `time_nsec` (< 1e9) |
 | 20 | 2 | u16 | `frame` (1 ITRF2020, 2 GCRS, 3 BCRS, 4 BODY) |
@@ -43,7 +43,7 @@ cd examples/c_caller && cargo build --release --manifest-path ../../Cargo.toml &
 Known-answer vectors are listed in `tests/kat/vectors.json` (human-readable) and `tests/kat/vectors.txt` (machine-readable). There are 20 vectors covering all frames and time scales, edge cases, and every error code. The original Cambridge vector is unchanged: `9f6cc1096562729a902167fd622e66a264a239f3e9a9d804414659e3ab97800e`.
 
 ## Measured facts (with method)
-- `.text` of the AEA object, release + LTO, measured with `llvm-size` on 2026-10-15 (excludes compiler_builtins soft-float helpers): thumbv6m 2,625 B; thumbv7em 2,651 B; thumbv8m.main 2,651 B; 0 B data/bss. The pre-`aea_quat_check` baseline on thumbv7em was 2,315 B.
+- `.text` of the AEA object (release + LTO, `llvm-size`, excluding compiler_builtins soft-float helpers): see `test_results/embedded_sizes.txt` in the AEA_Final set. Builds for Cortex-M0, M4/M7, and M33. Not yet run on target hardware.
 - Stack usage and cycle counts have **not** been measured yet. They are on the roadmap.
 - Big-endian: the tests are wired to run on s390x under QEMU in CI. See CI for status.
 - Bit-flip coverage: all 1,088 single-bit flips of the sealed Cambridge record are detected, with 6 documented exceptions. Those 6 are sign flips of fields equal to +0.0, which are canonicalized by design (see `tests/bitflip.rs`).
@@ -52,7 +52,7 @@ Known-answer vectors are listed in `tests/kat/vectors.json` (human-readable) and
 - Cortex-M4F has a single-precision FPU only, so double-precision handling uses software routines.
 - The identity quaternion means both "unmeasured" and "aligned with frame axes". This is a known v1 ambiguity.
 - ITRF coordinates are valid at the event epoch only. Comparing across years needs a plate-motion model applied by the user.
-- The time rule is: `time_sec` on TAI = POSIX + (TAI−UTC) − 8, where TAI−UTC was about 8 s on 1970-01-01. The worked examples give J2000 equivalents.
+- Time is seconds since 1970-01-01 on the declared scale. Operational UTC→TAI for post-1972 instants is `POSIX + (TAI−UTC) − 8` (see ICD §6.3).
 - The SHA-256 implementation is not CAVP/CMVP validated.
 
 ## Research roadmap (headline)
