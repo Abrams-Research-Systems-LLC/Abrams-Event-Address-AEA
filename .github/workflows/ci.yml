@@ -31,6 +31,19 @@ jobs:
         run: python examples/mission_timeline_demo.py
       - name: C caller (host)
         run: cargo build --release && make -C examples/c_caller run
+      - name: Save host logs
+        if: always()
+        run: |
+          mkdir -p /tmp/host_logs
+          cargo test > /tmp/host_logs/cargo_test.log 2>&1 || true
+          python verify.py > /tmp/host_logs/verify_py.log 2>&1 || true
+          bash verify.sh > /tmp/host_logs/verify_sh.log 2>&1 || true
+      - name: Upload host test and verification logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: host-verification-logs
+          path: /tmp/host_logs/
 
   embedded:
     name: Bare-metal build (${{ matrix.target }})
@@ -56,10 +69,18 @@ jobs:
           M=$(ls | grep '^aea')
           MEASURED=$($SIZE $M | awk 'NR==2{print $1}')
           echo "Target ${{ matrix.target }} measured .text: $MEASURED B (expected: ${{ matrix.expected_size }} B)"
+          mkdir -p /tmp/size_logs
+          echo "Target: ${{ matrix.target }}, Measured: $MEASURED B, Expected: ${{ matrix.expected_size }} B" > /tmp/size_logs/${{ matrix.target }}_size.txt
           if [ "$MEASURED" -ne "${{ matrix.expected_size }}" ]; then
             echo "ERROR: Code size changed from ${{ matrix.expected_size }} to $MEASURED!"
             exit 1
           fi
+      - name: Upload embedded size log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: embedded-${{ matrix.target }}-size
+          path: /tmp/size_logs/
 
   big-endian:
     name: Big-endian tests under QEMU (s390x)

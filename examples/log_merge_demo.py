@@ -73,7 +73,7 @@ def main():
         print(f"  [PASS] AEA verification detected accidental corruption.")
         print(f"         Stored Seal:   {stor_h}")
         print(f"         Computed Hash: {exp_h}")
-        print(f"         Result: Corrupted record flagged before consumption by host navigation stack.\n")
+        print(f"         Result: Corrupted record flagged before consumption by downstream log processing.\n")
     else:
         print(f"  [FAIL] Failed to detect bit flip!\n")
 
