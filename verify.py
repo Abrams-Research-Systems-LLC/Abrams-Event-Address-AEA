@@ -45,14 +45,17 @@ def check_banner(title):
     print(f"\n=== {title} ===")
 
 def measure_elf_text_from_ar(ar_path):
-    """Parses a static library archive in pure Python and measures .text of the aea object."""
+    """
+    Parses a static library archive in pure Python and measures Berkeley format 'text':
+    code (.text*) + read-only data (.rodata*) + exception index (.ARM.exidx*).
+    """
     if not os.path.exists(ar_path):
-        return None, None
+        return None, None, None, None, None
     try:
         with open(ar_path, "rb") as f:
             magic = f.read(8)
             if magic != b"!<arch>\n":
-                return None, None
+                return None, None, None, None, None
             strtab = b""
             while True:
                 hdr = f.read(60)
@@ -79,7 +82,10 @@ def measure_elf_text_from_ar(ar_path):
                             shstr_offset = struct.unpack_from(f"{endian}I", shstr_hdr, 16)[0]
                             shstr_size = struct.unpack_from(f"{endian}I", shstr_hdr, 20)[0]
                             shstrtab = data[shstr_offset : shstr_offset + shstr_size]
+                            
                             text_sz = 0
+                            rodata_sz = 0
+                            exidx_sz = 0
                             for i in range(e_shnum):
                                 sh = data[e_shoff + i * e_shentsize : e_shoff + (i + 1) * e_shentsize]
                                 sh_name = struct.unpack_from(f"{endian}I", sh, 0)[0]
@@ -87,10 +93,16 @@ def measure_elf_text_from_ar(ar_path):
                                 sec_name = shstrtab[sh_name:].split(b"\x00")[0].decode("latin1", "ignore")
                                 if sec_name == ".text" or sec_name.startswith(".text."):
                                     text_sz += sh_size
-                            return text_sz, real_name
+                                elif sec_name == ".rodata" or sec_name.startswith(".rodata."):
+                                    rodata_sz += sh_size
+                                elif sec_name == ".ARM.exidx" or sec_name.startswith(".ARM.exidx."):
+                                    exidx_sz += sh_size
+                            
+                            total_berkeley = text_sz + rodata_sz + exidx_sz
+                            return total_berkeley, text_sz, rodata_sz, exidx_sz, real_name
     except Exception:
         pass
-    return None, None
+    return None, None, None, None, None
 
 def main():
     repo_dir = os.path.dirname(os.path.abspath(__file__))
@@ -277,42 +289,32 @@ def main():
 
     # Check 7: Embedded Footprint & Code Size Check
     check_banner("Check 7: Embedded Footprint & Code Size Check")
-    sizes_txt = os.path.join(repo_dir, "test_results", "embedded_sizes.txt")
-    committed_ok = False
-    if os.path.exists(sizes_txt):
-        with open(sizes_txt, "r") as f:
-            stxt = f.read()
-        if "2329" in stxt and "2315" in stxt and "2319" in stxt:
-            committed_ok = True
-
     if not cargo_bin:
         skip("cargo not found in PATH; skipping embedded size verification")
     else:
-        # Check if thumbv6m-none-eabi target is installed
-        target_check = subprocess.run(["rustup", "target", "list", "--installed"], capture_output=True, text=True)
-        has_thumbv6m = "thumbv6m-none-eabi" in target_check.stdout
-
-        if not has_thumbv6m:
-            skip("thumbv6m-none-eabi target not installed in toolchain; skipping embedded measurement")
+        rustup_bin = shutil.which("rustup")
+        if not rustup_bin:
+            skip("rustup not found in PATH (distro cargo environment); skipping embedded measurement")
         else:
-            tgt_build = subprocess.run(["cargo", "build", "--release", "--target", "thumbv6m-none-eabi"], capture_output=True, text=True)
-            if tgt_build.returncode != 0:
-                fail(f"cargo build --release --target thumbv6m-none-eabi failed:\n{tgt_build.stdout}\n{tgt_build.stderr}")
+            target_check = subprocess.run(["rustup", "target", "list", "--installed"], capture_output=True, text=True)
+            has_thumbv6m = "thumbv6m-none-eabi" in target_check.stdout
+
+            if not has_thumbv6m:
+                skip("thumbv6m-none-eabi target not installed in toolchain; skipping embedded measurement")
             else:
-                target_ar = os.path.join(repo_dir, "target", "thumbv6m-none-eabi", "release", "libaea.a")
-                measured_size, obj_name = measure_elf_text_from_ar(target_ar)
-
-                # Alternatively try llvm-size if present
-                llvm_size_bin = shutil.which("llvm-size") or shutil.which("size")
-                if llvm_size_bin and target_ar:
-                    pass
-
-                if measured_size is not None and measured_size <= 2336:
-                    ok(f"Embedded build succeeded and measured: thumbv6m-none-eabi .text = {measured_size} B (<= 2,336 B limit; baseline 2,329 B in {obj_name})")
-                elif committed_ok:
-                    ok("Embedded size logs verified: Cortex-M0 (2,329 B), Cortex-M4/M7 (2,315 B), Cortex-M33 (2,319 B)")
+                tgt_build = subprocess.run(["cargo", "build", "--release", "--target", "thumbv6m-none-eabi"], capture_output=True, text=True)
+                if tgt_build.returncode != 0:
+                    fail(f"cargo build --release --target thumbv6m-none-eabi failed:\n{tgt_build.stdout}\n{tgt_build.stderr}")
                 else:
-                    fail("Embedded size measurement failed or exceeds limit")
+                    target_ar = os.path.join(repo_dir, "target", "thumbv6m-none-eabi", "release", "libaea.a")
+                    total_berkeley, c_sz, ro_sz, ex_sz, obj_name = measure_elf_text_from_ar(target_ar)
+
+                    if total_berkeley == 2329:
+                        ok(f"Embedded build verified exact: thumbv6m-none-eabi code + read-only data (llvm-size text) = {total_berkeley} B (code {c_sz} B + rodata {ro_sz} B + exidx {ex_sz} B in {obj_name})")
+                    elif total_berkeley is not None:
+                        fail(f"Embedded size mismatch: expected exactly 2,329 B (llvm-size text), measured {total_berkeley} B (code {c_sz} B + rodata {ro_sz} B + exidx {ex_sz} B in {obj_name})")
+                    else:
+                        fail("Failed to extract and parse object member from libaea.a")
 
     # Final Summary
     total_checks = pass_count + fail_count + skip_count

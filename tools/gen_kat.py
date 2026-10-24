@@ -61,7 +61,7 @@ V = [  # (name, op, record, note[, stored_hash_override])
     ("earth_bcrs_tcb", "seal", base(body_naif=0, frame=BCRS, time_scale=TCB, time_sec=tai_sec_from_utc_posix(946728000, 32),
      pos_m=[-2.6e10, 1.33e11, 5.77e10], vel_mps=[-29800.0, -4900.0, -2100.0]), "Same as above, TCB tag; body 0 = none (different hash by design)"),
     ("mars_jezero_body_tai", "seal", base(body_naif=499, frame=BODY, time_sec=tai_sec_from_utc_posix(1613681700, 37), pos_m=JEZERO),
-     "Jezero crater 18.4447N 77.4508E h=-2570 m, IAU2000 Mars ellipsoid; 2021-02-18T20:55:00 UTC"),
+     "Jezero crater 18.4447N 77.4508E; NASA's -2570 m areoid elevation used as illustrative ellipsoid height (NASA/JPL); 2021-02-18T20:55:00 UTC"),
     ("negative_zero_canonical", "seal", base(**{**CAMB, "vel_mps": [-0.0, -0.0, -0.0], "quat_xyzw": [-0.0, -0.0, -0.0, 1.0]}),
      "-0.0 canonicalized; hash must equal cambridge_itrf_tai"),
     ("max_nsec", "seal", base(**{**CAMB, "time_nsec": 999_999_999}), "Upper bound of time_nsec accepted"),

@@ -32,7 +32,7 @@ This document lists every quantitative and architectural claim made about AEA-ST
   - **Artifacts:** `fuzz/fuzz_targets/verify_bytes.rs`, `fuzz/fuzz_targets/seal_roundtrip.rs`.
 
 ## 4. Microcontroller Footprint
-- **Claim:** Compiles `#![no_std]` without heap allocation (`0 malloc`) for Arm Cortex-M bare-metal in ~2.3 KB of `.text` code size.
+- **Claim:** Compiles `#![no_std]` without heap allocation (`0 malloc`) for Arm Cortex-M bare-metal in ~2.3 KB of code plus read-only data (llvm-size text column: .text + .rodata + .ARM.exidx).
   - **Command:**
     - `thumbv6m-none-eabi` (Cortex-M0): 2,329 B
     - `thumbv7em-none-eabihf` (Cortex-M4/M7): 2,315 B

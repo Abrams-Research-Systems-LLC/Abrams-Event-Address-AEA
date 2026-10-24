@@ -170,7 +170,7 @@
   {
    "name": "mars_jezero_body_tai",
    "op": "seal",
-   "note": "Jezero crater 18.4447N 77.4508E h=-2570 m, IAU2000 Mars ellipsoid; 2021-02-18T20:55:00 UTC",
+   "note": "Jezero crater 18.4447N 77.4508E; NASA's -2570 m areoid elevation used as illustrative ellipsoid height (NASA/JPL); 2021-02-18T20:55:00 UTC",
    "fields": {
     "version": 1,
     "body_naif": 499,
