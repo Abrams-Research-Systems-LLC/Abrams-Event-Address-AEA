@@ -5,7 +5,7 @@ Demonstrates 4D spacetime event tagging across a multi-stage mission timeline:
 Launch Pad (ITRF2020) -> Earth Orbit (GCRS) -> Interplanetary (BCRS) -> Mars Touchdown (BODY/499)
 
 Clarification: AEA does NOT perform frame transformations internally (the host navigation
-stack performs orbital mechanics and coordinate transformations). AEA provides the unambiguous,
+stack performs orbital mechanics and coordinate transformations). AEA provides the explicit,
 standardized 136-byte record format that binds body, time scale, reference frame, kinematic state,
 and SHA-256 seal together into an unbroken, cross-verifiable mission timeline.
 
@@ -83,7 +83,7 @@ def main():
             "vel_mps": [0.0, 0.0, 0.0],
             "quat_xyzw": [0.0, 0.0, 0.0, 1.0],
             "expected_hash": "fbf55d85008816a7eb51f627b1472a66d94a965bd0eca630c26513ff4da2f5a7",
-            "note": "Jezero Crater 18.4447 N, 77.4508 E, h=-2570 m relative to the Mars reference areoid (MOLA datum; NASA/JPL)."
+            "note": "Jezero Crater 18.4447 N, 77.4508 E; NASA's -2570 m areoid elevation, used here as an illustrative ellipsoid height (NASA/JPL)."
         }
     ]
 

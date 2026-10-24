@@ -1,7 +1,7 @@
 # Abrams Event Address (AEA): AEA-STATE/1
 
 [![CI](https://github.com/unlimitedinfinit/Abrams-Event-Address-AEA/actions/workflows/ci.yml/badge.svg)](https://github.com/unlimitedinfinit/Abrams-Event-Address-AEA/actions/workflows/ci.yml)
-[![License: MIT OR Apache-2.0](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue.svg)](LICENSE)
+[![License: MIT OR Apache-2.0](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue.svg)](LICENSE-MIT)
 
 The CI badge above is GitHub's live workflow status, not a static image.
 
@@ -68,4 +68,4 @@ These are open questions, not capabilities. We plan to investigate:
 No prebuilt binaries are released at this time. Build from source as shown above.
 
 ## License
-MIT OR Apache-2.0. Both texts are in [LICENSE](LICENSE).
+MIT OR Apache-2.0. The full license texts are available in [LICENSE-MIT](LICENSE-MIT) and [LICENSE-APACHE](LICENSE-APACHE).

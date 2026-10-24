@@ -60,7 +60,7 @@ def main():
     print(f"      - Position error on tactical UAV cruise (25 m/s):      {uav_pos_error:,.1f} meters")
     print(f"      - Position error on orbital LEO vehicle (7,668.6 m/s): {leo_pos_error/1000:,.2f} kilometers")
     print("  [+] AEA Solution: `time_scale` is an explicit uint16 tag (1=TAI, 2=TT, 3=TCB, 4=TDB).")
-    print("      Downstream fusion systems detect the scale mismatch before merging sensor tracks.\n")
+    print("      Downstream fusion systems can detect the scale mismatch before merging sensor tracks.\n")
 
     # 3. Accidental memory corruption detection (Bit-Flip / SEU)
     print("3. ACCIDENTAL CORRUPTION / BIT-FLIP DETECTION:")
