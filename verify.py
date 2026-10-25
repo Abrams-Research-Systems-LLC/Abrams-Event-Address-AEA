@@ -109,7 +109,7 @@ def main():
     os.chdir(repo_dir)
 
     print("===================================================================")
-    print("  AEA-STATE/1 v1.0.2 — Comprehensive Verification Suite    ")
+    print("  AEA-STATE/1 v1.0.3 — Comprehensive Verification Suite    ")
     print(f"  Repo Directory: {repo_dir}")
     print("===================================================================")
 

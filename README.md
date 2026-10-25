@@ -69,3 +69,9 @@ No prebuilt binaries are released at this time. Build from source as shown above
 
 ## License
 MIT OR Apache-2.0. The full license texts are available in [LICENSE-MIT](LICENSE-MIT) and [LICENSE-APACHE](LICENSE-APACHE).
+
+## Building a release archive
+
+```sh
+tools/make_release.sh v1.0.3 dist   # git archive --prefix=aea-1.0.3/ v1.0.3 | gzip -n, plus dist/SHA256SUMS
+```

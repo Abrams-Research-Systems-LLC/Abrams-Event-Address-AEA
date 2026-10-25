@@ -21,7 +21,7 @@ import aea
 
 def main():
     print("=========================================================================")
-    print("  AEA-STATE/1 v1.0.2 — Multi-Platform Log Merge & Corruption Demo        ")
+    print("  AEA-STATE/1 v1.0.3 — Multi-Platform Log Merge & Corruption Demo        ")
     print("=========================================================================\n")
 
     print("1. SIMULATING PLATFORM STATE LOGS:")

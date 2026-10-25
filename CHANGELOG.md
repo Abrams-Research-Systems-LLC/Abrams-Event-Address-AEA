@@ -2,6 +2,31 @@
 
 All notable changes to the Abrams Event Address (AEA) project are documented in this file.
 
+## [1.0.3] - Unreleased (draft)
+
+### Summary
+Reproducibility and packaging fixes. No change to the AEA-STATE/1 record format, the C ABI, or the measured code sizes (2,329 B / 2,315 B / 2,319 B).
+
+### Fixed
+- **Line endings**: Added `.gitattributes` forcing LF for all text files. The published `aea-1.0.2.tar.gz` asset was built on Windows and contains CRLF line endings, so it is not byte-identical to `git archive v1.0.2`, and `verify.sh` from that tarball fails under bash on Linux. The v1.0.2 asset is left unchanged because its hash is published; use a v1.0.3 archive or `git archive v1.0.2` instead.
+- **verify.sh**: Now committed with mode 100755, so `./verify.sh` runs directly.
+- **CI fuzz job**: Pinned to `nightly-2026-10-01` instead of the floating `nightly`. `cargo-fuzz` is still installed at its latest version, so fuzz runs are smoke tests, not bit-for-bit reproducible.
+
+### Added
+- `tools/make_release.sh TAG [OUTDIR]`: builds `aea-<version>.tar.gz` with `git archive --prefix=aea-<version>/` and writes `SHA256SUMS`.
+
+### Note on Tag History (complete)
+Before tags were frozen, two of them were moved:
+- `v1.0.0` was first created, then re-pointed as a lightweight tag (to `1cdf414`), then re-created as annotated tag object `eaa1fb2` on commit `d2bbe24`, where it now stays.
+- `v1.0.1` was first placed on `961454b`, then re-pointed to `45787dc`, where it now stays.
+- `v1.0.2` (`19a34e0`) has not been moved.
+From v1.0.2 onward, tags are never moved; any correction ships as a new version.
+
+### Notes
+- `test_results/*.txt` are developer-environment runs from Oct 15, 2026 (before v1.0.0) and contain local absolute paths. CI logs on the tagged commit are the reference.
+
+---
+
 ## [1.0.2] - 2026-10-24
 
 ### Summary
@@ -19,7 +44,7 @@ Submittable evaluation baseline release resolving packaging, documentation, and 
 ## [1.0.1] - 2026-10-24
 
 ### Note on Tag History
-During release preparation on October 24, 2026, the `v1.0.1` tag was initially placed at commit `961454b` and subsequently re-pointed to `45787dc` (at approximately 17:40 MDT) to include active Berkeley text measurement, rustup environment guarding, and Mars areoid datum documentation. To ensure absolute immutability going forward, tags `v1.0.0` and `v1.0.1` remain permanently frozen at their respective commits (`d2bbe24` and `45787dc`), and all submission packages target release `v1.0.2`.
+During release preparation on October 24, 2026, the `v1.0.1` tag was initially placed at commit `961454b` and subsequently re-pointed to `45787dc` (at approximately 17:40 MDT) to include active Berkeley text measurement, rustup environment guarding, and Mars areoid datum documentation. Tags `v1.0.0` and `v1.0.1` are now frozen at their respective commits (`d2bbe24` and `45787dc`), and all submission packages target release `v1.0.2`.
 
 ### Changed
 - Replaced LICENSE-APACHE text with exact upstream text from apache.org.
@@ -33,7 +58,7 @@ During release preparation on October 24, 2026, the `v1.0.1` tag was initially p
 ## [1.0.0] - 2026-10-24
 
 ### Summary
-Initial frozen baseline specification and reference implementation at commit `d2bbe24`.
+Initial baseline specification and reference implementation, now at commit `d2bbe24`. Note: this tag was moved before tags were frozen; see the tag history under 1.0.3.
 
 ### Added
 - Fixed 136-byte `AEA-STATE/1` data structure with little-endian canonical prefix and SHA-256 integrity digest.

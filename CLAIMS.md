@@ -1,6 +1,6 @@
-# AEA-STATE/1 v1.0.2 — Claims and How to Check Them
+# AEA-STATE/1 v1.0.3 — Claims and How to Check Them
 
-This document lists every quantitative and architectural claim made about AEA-STATE/1 v1.0.2, the exact command to reproduce it, and the reference file.
+This document lists every quantitative and architectural claim made about AEA-STATE/1 v1.0.3, the exact command to reproduce it, and the reference file.
 
 ## 1. Specification & Wire Layout
 - **Claim:** AEA-STATE/1 is a fixed, naturally aligned 136-byte binary record (`repr(C)`, 8-byte alignment, zero padding).
