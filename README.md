@@ -5,12 +5,12 @@
 
 The CI badge above is GitHub's live workflow status, not a static image.
 
-**AEA-STATE/1 is a proposed 136-byte record format.** It tags an estimated state with a frame and a time scale, and protects the record with a SHA-256 integrity digest. The reference implementation is a zero-heap `#![no_std]` Rust library with a C ABI. Version 1.0.0. Readiness is about TRL 3: a lab proof of concept with no hardware or flight demonstration yet.
+**AEA-STATE/1 is a proposed 136-byte record format.** It tags an estimated state with a frame and a time scale, and protects the record with a SHA-256 integrity digest. The reference implementation is a zero-heap `#![no_std]` Rust library with a C ABI. Wire-format version 1.0 (reference implementation release v1.0.3, ABI version 1.0 via `aea_version() = 0x00010000`). Readiness is TRL 3: a host-verified proof of concept with no hardware or flight demonstration yet.
 
 ## What it is
 - A fixed, naturally aligned, 136-byte binary record. Its contents are: body (NAIF ID), time (seconds and nanoseconds on a declared time scale), reference frame, position, velocity, and an attitude quaternion. A SHA-256 digest of the first 104 bytes follows.
 - A small C-callable library: exactly three functions: `aea_seal`, `aea_verify`, `aea_version`.
-- **Integrity only.** It detects accidental modification such as bit flips, memory or flash corruption, and truncation.
+- **Integrity only.** It detects modification to the sealed 104-byte prefix (such as bit flips, memory or flash corruption, and truncation; 1,082 of 1,088 single-bit flips detected). It does not stop deliberate tampering if the digest is recomputed.
 
 ## What it is not
 - It is **not authentication.** The digest is unkeyed, so anyone who can modify a record can recompute it. It does not protect against a deliberate attacker or spoofing. An authenticated profile is specified separately as a draft and is not implemented: [docs/AEA-AUTH-DRAFT.md](docs/AEA-AUTH-DRAFT.md).

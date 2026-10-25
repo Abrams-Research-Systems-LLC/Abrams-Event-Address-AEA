@@ -10,7 +10,7 @@ Physical scenarios:
    - At tactical UAV velocity (25 m/s):  25 m/s * 37 s = 925.0 meters coordinate offset.
    - At orbital spacecraft velocity (7,668.56 m/s): 7,668.56 m/s * 37 s = 283.74 kilometers coordinate offset.
    Downstream sensor fusion without explicit time scale labels misaligns tracks by hundreds of meters to kilometers.
-3. A single-event upset (SEU) flips 1 bit in flash memory. AEA-STATE/1 detects corruption immediately.
+3. A simulated bit flip corrupts 1 bit in flash memory. AEA-STATE/1 verification flags the corrupted record.
 """
 
 import sys
