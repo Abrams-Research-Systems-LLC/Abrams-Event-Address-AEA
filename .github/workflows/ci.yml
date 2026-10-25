@@ -97,12 +97,12 @@ jobs:
         run: cargo test --target s390x-unknown-linux-gnu
 
   fuzz-smoke:
-    name: Fuzz smoke (60 s per target, nightly)
+    name: Fuzz smoke (60 s per target, nightly-2026-10-01)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: rustup toolchain install nightly --profile minimal && cargo +nightly install cargo-fuzz --locked
+      - run: rustup toolchain install nightly-2026-10-01 --profile minimal && cargo +nightly-2026-10-01 install cargo-fuzz --locked
       - run: |
           cd fuzz
-          cargo +nightly fuzz run verify_bytes -- -max_total_time=60
-          cargo +nightly fuzz run seal_roundtrip -- -max_total_time=60
+          cargo +nightly-2026-10-01 fuzz run verify_bytes -- -max_total_time=60
+          cargo +nightly-2026-10-01 fuzz run seal_roundtrip -- -max_total_time=60
