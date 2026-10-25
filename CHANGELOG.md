@@ -2,7 +2,7 @@
 
 All notable changes to the Abrams Event Address (AEA) project are documented in this file.
 
-## [1.0.3] - Unreleased (draft)
+## [1.0.3] - 2026-10-25
 
 ### Summary
 Reproducibility and packaging fixes. No change to the AEA-STATE/1 record format, the C ABI, or the measured code sizes (2,329 B / 2,315 B / 2,319 B).
