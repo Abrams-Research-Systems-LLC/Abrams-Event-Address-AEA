@@ -1,0 +1,22 @@
+# Force LF line endings for all text files so archives and checkouts are identical on every OS.
+* text=auto eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+*.rs text eol=lf
+*.md text eol=lf
+*.toml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.txt text eol=lf
+*.c text eol=lf
+*.h text eol=lf
+*.html text eol=lf
+*.lock text eol=lf
+Makefile text eol=lf
+SHA256SUMS text eol=lf
+NOTICE text eol=lf
+LICENSE-* text eol=lf
+*.bin binary
+*.hash binary
+*.jfif binary
