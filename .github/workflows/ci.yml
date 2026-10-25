@@ -68,7 +68,7 @@ jobs:
           mkdir -p /tmp/o && cd /tmp/o && ar x $GITHUB_WORKSPACE/target/${{ matrix.target }}/release/libaea.a
           M=$(ls | grep '^aea')
           MEASURED=$($SIZE $M | awk 'NR==2{print $1}')
-          echo "Target ${{ matrix.target }} measured .text: $MEASURED B (expected: ${{ matrix.expected_size }} B)"
+          echo "Target ${{ matrix.target }} measured code + rodata (llvm-size text): $MEASURED B (expected: ${{ matrix.expected_size }} B)"
           mkdir -p /tmp/size_logs
           echo "Target: ${{ matrix.target }}, Measured: $MEASURED B, Expected: ${{ matrix.expected_size }} B" > /tmp/size_logs/${{ matrix.target }}_size.txt
           if [ "$MEASURED" -ne "${{ matrix.expected_size }}" ]; then

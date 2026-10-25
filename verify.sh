@@ -23,7 +23,7 @@ if command -v gcc >/dev/null 2>&1 && [ -f target/release/libaea.a ]; then
     echo "== C caller"; gcc -std=c11 -Wall -O2 -Iinclude examples/c_caller/main.c -Ltarget/release -laea -lpthread -ldl -lm -o /tmp/aea_c_$$ && /tmp/aea_c_$$ ; [ $? = 0 ] && ok "C caller" || bad "C caller"
 fi
 echo "== Rust vs C vs Python digest"; RD=$(cat tests/kat/cambridge.hash 2>/dev/null|tr -d ' \n'); echo "cambridge.hash: $RD"
-echo "== Cortex-M .text"
+echo "== Cortex-M code + rodata (llvm-size text)"
 for t in thumbv6m-none-eabi thumbv7em-none-eabihf thumbv8m.main-none-eabihf; do
     rustup target add $t >/dev/null 2>&1
     cargo build --release -q --target $t 2>&1|tail -2
@@ -34,7 +34,7 @@ for t in thumbv6m-none-eabi thumbv7em-none-eabihf thumbv8m.main-none-eabihf; do
         (cd $D && ar x "$OLDPWD/$L" $M)
         SZ=$( (llvm-size $D/$M 2>/dev/null || size $D/$M) | awk 'NR==2{print $1}')
         rm -rf $D
-        echo "$t aea member .text = $SZ B"
+        echo "$t aea member code + rodata (llvm-size text) = $SZ B"
     fi
 done
 [ -f tests/kat/vectors.json ] && python3 - <<'PY'

@@ -21,7 +21,7 @@ import aea
 
 def main():
     print("=========================================================================")
-    print("  AEA-STATE/1 v1.0.0 — Multi-Regime 4D Spacetime Timeline Demonstration  ")
+    print("  AEA-STATE/1 v1.0.2 — Multi-Regime 4D Spacetime Timeline Demonstration  ")
     print("=========================================================================\n")
 
     events = [

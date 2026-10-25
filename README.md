@@ -43,7 +43,7 @@ cd examples/c_caller && cargo build --release --manifest-path ../../Cargo.toml &
 Known-answer vectors are listed in `tests/kat/vectors.json` (human-readable) and `tests/kat/vectors.txt` (machine-readable). There are 20 vectors covering all frames and time scales, edge cases, and every error code. The original Cambridge vector is unchanged: `9f6cc1096562729a902167fd622e66a264a239f3e9a9d804414659e3ab97800e`.
 
 ## Measured facts (with method)
-- `.text` of the AEA object (release + LTO, `llvm-size`, excluding compiler_builtins soft-float helpers): see `test_results/embedded_sizes.txt` in the AEA_Final set. Builds for Cortex-M0, M4/M7, and M33. Not yet run on target hardware.
+- Code plus read-only data (llvm-size text column, release + LTO, excluding compiler_builtins soft-float helpers): see `test_results/embedded_sizes.txt`. Builds for Cortex-M0 (2,329 B), M4/M7 (2,315 B), and M33 (2,319 B). Not yet run on target hardware.
 - Stack usage and cycle counts have **not** been measured yet. They are on the roadmap.
 - Big-endian: the tests are wired to run on s390x under QEMU in CI. See CI for status.
 - Bit-flip coverage: all 1,088 single-bit flips of the sealed Cambridge record are detected, with 6 documented exceptions. Those 6 are sign flips of fields equal to +0.0, which are canonicalized by design (see `tests/bitflip.rs`).
