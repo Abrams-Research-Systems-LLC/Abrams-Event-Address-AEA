@@ -42,6 +42,6 @@ This document lists every quantitative and architectural claim made about AEA-ST
 ## 5. Scope Boundaries (What it does NOT do)
 - AEA-STATE/1 is **TRL 3** (host-verified proof of concept; no flight hardware runs yet).
 - It is **not** a navigation engine, filter, or propagator.
-- It is **not** a digital signature or authentication envelope (the SHA-256 seal is unkeyed integrity against accidental corruption; anyone can reseal a record).
+- It is **not** a digital signature or authentication envelope (the SHA-256 seal is unkeyed integrity against bit errors and storage corruption; anyone can reseal a record).
 - It does **not** bound drift, mitigate GPS denial, or save propellant by itself.
 - Authenticated profile is specified separately as a draft (`docs/AEA-AUTH-DRAFT.md`).

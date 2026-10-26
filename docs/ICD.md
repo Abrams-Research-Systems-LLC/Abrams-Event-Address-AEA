@@ -3,7 +3,7 @@
 ## 1. Scope & Overview
 This document specifies the wire layout, binary encoding, enumeration tables, and error codes for the **Abrams Event Address** state record (`AEA-STATE/1`). 
 
-The record is a fixed-size, 136-byte, naturally aligned, Little-Endian data structure intended for state logging and interchange. It provides integrity (accidental-corruption detection) only, not authentication.
+The record is a fixed-size, 136-byte, naturally aligned, Little-Endian data structure intended for state logging and interchange. ABI version 1.0 (`aea_version() = 0x00010000`). It provides integrity (unkeyed corruption detection) only, not authentication.
 
 ---
 
@@ -103,7 +103,7 @@ AEA:399:TAI:1246190426.0:ITRF2020:3916909.5232774816,8057.749278632174,5016918.6
 > **Panic Symbol Collision:** Do not link a second Rust static library that also defines a panic handler, as the linker will report duplicate `panic_impl` symbols.
 
 ### 6.2 Cryptographic Integrity vs. Provenance
-The embedded SHA-256 hash detects accidental data corruption against memory corruption, SEU, and transmission bit-rot. It is an unkeyed digest, not an authenticated digital signature. Provenance authentication (e.g. Ed25519) should be applied as an outer container wrapper around the 136-byte record.
+The embedded SHA-256 hash detects data corruption against memory corruption, storage errors, and transmission bit-rot. It is an unkeyed digest, not an authenticated digital signature. Provenance authentication (e.g. Ed25519) should be applied as an outer container wrapper around the 136-byte record.
 
 ### 6.3 Time origin (1970 on the declared scale) and the −8 TAI rule
 `time_sec` counts seconds since 1970-01-01T00:00:00 **on the declared `time_scale`**. It is not POSIX/UTC, and there is no J-epoch.

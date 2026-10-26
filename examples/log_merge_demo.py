@@ -2,7 +2,7 @@
 """
 examples/log_merge_demo.py
 Demonstrates multi-platform 4D spacetime log merge, time-scale offset detection,
-and memory corruption (SEU / bit-rot) detection.
+and memory corruption (storage bit error) detection.
 
 Physical scenarios:
 1. Ground Radar and UAV-Alpha log state in Earth-fixed ITRF2020 on atomic TAI scale.
@@ -21,7 +21,7 @@ import aea
 
 def main():
     print("=========================================================================")
-    print("  AEA-STATE/1 v1.0.3 — Multi-Platform Log Merge & Corruption Demo        ")
+    print("  AEA-STATE/1 v1.0.4 — Multi-Platform Log Merge & Corruption Demo        ")
     print("=========================================================================\n")
 
     print("1. SIMULATING PLATFORM STATE LOGS:")
@@ -62,15 +62,15 @@ def main():
     print("  [+] AEA Solution: `time_scale` is an explicit uint16 tag (1=TAI, 2=TT, 3=TCB, 4=TDB).")
     print("      Downstream fusion systems can detect the scale mismatch before merging sensor tracks.\n")
 
-    # 3. Accidental memory corruption detection (Bit-Flip / SEU)
-    print("3. ACCIDENTAL CORRUPTION / BIT-FLIP DETECTION:")
+    # 3. Storage memory corruption detection (Bit-Flip)
+    print("3. STORAGE CORRUPTION / BIT-FLIP DETECTION:")
     corrupted_data = bytearray(raw_alpha)
     corrupted_data[52] ^= 0x01  # Invert 1 bit in vel_mps[0] double
 
     valid_c, exp_h, stor_h = aea.verify_record(bytes(corrupted_data))
     print(f"  [*] Injected 1-bit flip at byte offset 52 (vel_mps field)...")
     if not valid_c:
-        print(f"  [PASS] AEA verification detected accidental corruption.")
+        print(f"  [PASS] AEA verification detected injected bit error.")
         print(f"         Stored Seal:   {stor_h}")
         print(f"         Computed Hash: {exp_h}")
         print(f"         Result: Corrupted record flagged before consumption by downstream log processing.\n")

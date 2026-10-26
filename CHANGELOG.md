@@ -2,6 +2,16 @@
 
 All notable changes to the Abrams Event Address (AEA) project are documented in this file.
 
+## [1.0.4] - 2026-10-25
+
+### Summary
+Demo clarification and documentation harmonization. No change to the AEA-STATE/1 wire-format version 1.0, C ABI (0x00010000), or measured code sizes (2,329 B / 2,315 B / 2,319 B).
+
+### Fixed
+- **examples/log_merge_demo.py**: Removed "SEU" and "accidental" terminology; aligned with storage bit-error detection.
+- **docs/ICD.md & CLAIMS.md**: Harmonized scope boundaries to state unkeyed integrity against bit errors and storage corruption.
+- **docs/HYPOTHESES.md**: Added complete H1–H6 metrics, experiment setups, and failure conditions.
+
 ## [1.0.3] - 2026-10-25
 
 ### Summary

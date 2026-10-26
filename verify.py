@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-verify.py — Self-Contained Auditor Reproduction Script for AEA-STATE/1 v1.0.3
+verify.py — Self-Contained Auditor Reproduction Script for AEA-STATE/1 v1.0.4
 Works on Windows, Linux, and macOS.
 Zero external Python dependencies (standard library only).
 Recomputes hashes, layout, 20 KAT vectors, bit-flip corruption detection, demos,
