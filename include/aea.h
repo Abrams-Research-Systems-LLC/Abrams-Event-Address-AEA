@@ -63,7 +63,7 @@ enum AeaFrame {
  */
 typedef struct {
     uint32_t version;       /* Offset  0: Wire format version (must be 1) */
-    uint32_t body_naif;     /* Offset  4: NAIF Body ID (399=Earth, 499=Mars, 0=none, NOT a barycenter) */
+    uint32_t body_naif;     /* Offset  4: NAIF Body ID (399=Earth, 301=Moon, 499=Mars, 0=none, NOT a barycenter) */
     int64_t  time_sec;      /* Offset  8: Integer seconds elapsed since 1970-01-01 on declared scale */
     uint32_t time_nsec;     /* Offset 16: Integer nanoseconds (0 to 999,999,999) */
     uint16_t frame;         /* Offset 20: Coordinate frame enum (enum AeaFrame) */

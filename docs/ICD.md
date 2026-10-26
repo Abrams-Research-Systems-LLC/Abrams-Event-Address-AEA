@@ -14,7 +14,7 @@ The `AeaRecord` structure occupies exactly 136 bytes in memory. The field orderi
 | Offset | Size (B) | Type | Field Name | Description |
 |:---:|:---:|:---|---|---|
 | `0` | 4 | `uint32_t` | `version` | Wire format version. Must be `1`. |
-| `4` | 4 | `uint32_t` | `body_naif` | NAIF Body ID (`399` = Earth geocenter, `499` = Mars, `0` = none, **not** a barycenter). |
+| `4` | 4 | `uint32_t` | `body_naif` | NAIF Body ID (`399` = Earth geocenter, `301` = Moon, `499` = Mars, `0` = none, **not** a barycenter). |
 | `8` | 8 | `int64_t` | `time_sec` | Integer seconds elapsed since 1970-01-01T00:00:00 on the declared `time_scale`. |
 | `16` | 4 | `uint32_t` | `time_nsec` | Integer nanoseconds ($0 \le \text{nsec} \le 999,999,999$). |
 | `20` | 2 | `uint16_t` | `frame` | Coordinate reference chart enum (`enum AeaFrame`). |

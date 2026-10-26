@@ -22,7 +22,7 @@ The CI badge above is GitHub's live workflow status, not a static image.
 | Offset | Size | Type | Field |
 |---:|---:|---|---|
 | 0 | 4 | u32 | `version` (=1) |
-| 4 | 4 | u32 | `body_naif` (399 Earth geocenter, 499 Mars, 0 = none, not a barycenter) |
+| 4 | 4 | u32 | `body_naif` (399 Earth geocenter, 301 Moon, 499 Mars, 0 = none, not a barycenter) |
 | 8 | 8 | i64 | `time_sec`: seconds since 1970-01-01T00:00:00 on the declared scale |
 | 16 | 4 | u32 | `time_nsec` (< 1e9) |
 | 20 | 2 | u16 | `frame` (1 ITRF2020, 2 GCRS, 3 BCRS, 4 BODY) |
