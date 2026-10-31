@@ -1,11 +1,15 @@
 # Abrams Event Address (AEA): AEA-STATE/1
 
-[![CI](https://github.com/unlimitedinfinit/Abrams-Event-Address-AEA/actions/workflows/ci.yml/badge.svg)](https://github.com/unlimitedinfinit/Abrams-Event-Address-AEA/actions/workflows/ci.yml)
+[![CI](https://github.com/Abrams-Research-Systems-LLC/Abrams-Event-Address-AEA/actions/workflows/ci.yml/badge.svg)](https://github.com/Abrams-Research-Systems-LLC/Abrams-Event-Address-AEA/actions/workflows/ci.yml)
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue.svg)](LICENSE-MIT)
 
 The CI badge above is GitHub's live workflow status, not a static image.
 
-**AEA-STATE/1 is a proposed 136-byte record format.** It tags an estimated state with a frame and a time scale, and protects the record with a SHA-256 integrity digest. The reference implementation is a zero-heap `#![no_std]` Rust library with a C ABI. Wire-format version 1.0 (reference implementation release v1.0.3, ABI version 1.0 via `aea_version() = 0x00010000`). Readiness is TRL 3: a host-verified proof of concept with no hardware or flight demonstration yet.
+## Overview
+
+Abrams Research Systems developed AEA, a simple software record format that captures a vehicle's position, motion, orientation, and time as one consistent snapshot. When a drone, missile, or spacecraft loses GPS or radio contact from jamming, spoofing, or distance, the last recorded state is often hard to use because different systems track clocks and coordinate frames differently. AEA packages those existing measurements into a single record with a built-in corruption check so the data stays consistent and usable. The software is written and host-verified at TRL 3, and is designed to plug into existing flight software through a standard C interface. We believe that, once properly tested, AEA could help with faster recovery after loss of comms, more accurate course correction, lower processing load during recalibration, and reduced fuel spent on re-acquisition across drones, missiles, and deep-space missions.
+
+**AEA-STATE/1 is a proposed 136-byte record format.** It tags an estimated state with a frame and a time scale, and protects the record with a SHA-256 integrity digest. The reference implementation is a zero-heap `#![no_std]` Rust library with a C ABI. Wire-format version 1.0 (reference implementation release v1.0.4, ABI version 1.0 via `aea_version() = 0x00010000`). Readiness is TRL 3: a host-verified proof of concept with no hardware or flight demonstration yet.
 
 ## What it is
 - A fixed, naturally aligned, 136-byte binary record. Its contents are: body (NAIF ID), time (seconds and nanoseconds on a declared time scale), reference frame, position, velocity, and an attitude quaternion. A SHA-256 digest of the first 104 bytes follows.
@@ -73,5 +77,5 @@ MIT OR Apache-2.0. The full license texts are available in [LICENSE-MIT](LICENSE
 ## Building a release archive
 
 ```sh
-tools/make_release.sh v1.0.3 dist   # git archive --prefix=aea-1.0.3/ v1.0.3 | gzip -n, plus dist/SHA256SUMS
+tools/make_release.sh v1.0.4 dist   # git archive --prefix=aea-1.0.4/ v1.0.4 | gzip -n, plus dist/SHA256SUMS
 ```
